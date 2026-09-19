@@ -1,0 +1,1720 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<title>Платформа KUPUEV ACADEMY</title>
+<link rel="icon" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F2EBD9; --paper-2:#EBE3CE; --paper-3:#E3DAC0;
+  --ink:#1A1814; --ink-2:#4A453A; --ink-3:#8A8270; --ink-4:#B5AC97;
+  --rule:#D4CCB5; --rule-strong:#B5AC97;
+  --signal:#C73E1D; --signal-dark:#8A2A11; --signal-tint:#F8D7C9;
+  --teal:#1B5E6B; --teal-dark:#0E3F49; --teal-tint:#C5DDE0;
+  --highlight:#FFE89E; --warn:#B8860B;
+  --green:#2F6B3D; --green-dark:#22522D; --green-tint:#CFE3D2;
+  --serif:'Instrument Serif','Times New Roman',serif;
+  --sans:'Space Grotesk',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{margin:0;font-weight:400}
+p{margin:0 0 .6em}
+button{font-family:inherit;font-size:inherit;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:inherit}
+a{color:var(--teal-dark)}
+
+/* ---------- shell ---------- */
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px 80px}
+.topbar{border-bottom:2px solid var(--ink);background:var(--paper);position:sticky;top:0;z-index:50}
+.topbar-in{max-width:1180px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{font-family:var(--serif);font-size:26px;line-height:1;letter-spacing:.03em}
+.brand small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3);margin-top:4px}
+.spacer{flex:1}
+.who{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);text-align:right}
+.who b{display:block;font-family:var(--sans);font-size:13.5px;letter-spacing:0;text-transform:none;color:var(--ink)}
+
+.btn{border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);padding:8px 16px;border-radius:2px;font-weight:500;transition:.12s}
+.btn:hover{background:var(--ink);color:var(--paper)}
+.btn.primary{background:var(--signal);border-color:var(--signal);color:#fff}
+.btn.primary:hover{background:var(--signal-dark);border-color:var(--signal-dark)}
+.btn.ghost{border-color:var(--rule-strong);color:var(--ink-2)}
+.btn.sm{padding:5px 11px;font-size:13.5px}
+.btn.tiny{padding:3px 8px;font-size:12px}
+
+.demo-flag{background:var(--highlight);border-bottom:1px solid var(--rule-strong);font-family:var(--mono);font-size:12px;letter-spacing:.05em;padding:7px 20px;text-align:center;color:var(--ink-2)}
+.reset-demo{font:inherit;letter-spacing:inherit;background:none;border:0;border-bottom:1px solid var(--ink-3);padding:0;color:var(--ink-2)}
+.reset-demo:hover{color:var(--ink);border-bottom-color:var(--ink)}
+
+/* ---------- login ---------- */
+.login{max-width:520px;margin:6vh auto;padding:0 20px}
+.login h1{font-family:var(--serif);font-size:46px;line-height:1.05;margin-bottom:10px}
+.login .lede{color:var(--ink-2);margin-bottom:32px}
+.roles{display:grid;gap:12px}
+.role{display:flex;gap:16px;align-items:flex-start;text-align:left;width:100%;border:1.5px solid var(--rule-strong);background:var(--paper-2);padding:18px 20px;border-radius:3px;transition:.14s}
+.role:hover{border-color:var(--ink);background:var(--paper-3)}
+.role .ic{width:38px;height:38px;flex:none;border:1.5px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-family:var(--serif);font-size:19px}
+.role b{display:block;font-size:17px;font-weight:600;margin-bottom:2px}
+.role span{color:var(--ink-3);font-size:13.5px;line-height:1.4}
+.panel{border:1.5px solid var(--ink);background:var(--paper-2);padding:26px;border-radius:3px}
+.field{margin-bottom:16px}
+.field label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;border:1.5px solid var(--rule-strong);background:var(--paper);padding:10px 12px;border-radius:2px;color:var(--ink)}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--teal)}
+.err{color:var(--signal);font-size:13.5px;min-height:20px}
+.name-list{display:grid;gap:8px;max-height:340px;overflow:auto;margin-bottom:16px}
+.name-list button{text-align:left;border:1.5px solid var(--rule-strong);background:var(--paper);padding:11px 14px;border-radius:2px}
+.name-list button:hover{border-color:var(--signal);background:var(--signal-tint)}
+
+/* ---------- generic blocks ---------- */
+.section-head{display:flex;align-items:baseline;gap:14px;margin:34px 0 16px;padding-bottom:9px;border-bottom:2px solid var(--ink)}
+.section-head h2{font-family:var(--serif);font-size:31px;line-height:1}
+.section-head .sub{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.card{border:1.5px solid var(--rule-strong);background:var(--paper-2);border-radius:3px;padding:18px}
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:8px}
+.stat{border:1.5px solid var(--rule-strong);background:var(--paper-2);border-radius:3px;padding:14px 16px}
+.stat .l{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:5px}
+.stat .v{font-family:var(--serif);font-size:37px;line-height:1}
+.stat .v small{font-family:var(--sans);font-size:13.5px;color:var(--ink-3)}
+
+.bar{height:9px;background:var(--paper-3);border:1px solid var(--rule-strong);border-radius:20px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--green);border-radius:20px}
+
+/* ---------- student ---------- */
+.hero{border:2px solid var(--ink);background:var(--paper-2);border-radius:3px;padding:24px;margin-top:24px;display:flex;gap:26px;flex-wrap:wrap;align-items:center}
+.hero .big{font-family:var(--serif);font-size:56px;line-height:.95}
+.hero .big small{font-family:var(--sans);font-size:17px;color:var(--ink-3);letter-spacing:0}
+.hero .grow{flex:1;min-width:240px}
+/* Текущий проект — сразу с действиями, чтобы не искать его карточку среди семнадцати. */
+.hero-acts{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.hero-acts .btn{text-decoration:none}
+.hero-acts .mark{width:auto;padding:8px 16px}
+.proj-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:12px;align-items:start}
+.pcard{border:1.5px solid var(--rule-strong);background:var(--paper-2);border-radius:3px;padding:15px 16px;display:flex;flex-direction:column;gap:9px}
+.pcard.done{border-color:var(--green);background:var(--green-tint)}
+.pcard.stuck{border-color:var(--signal);background:var(--signal-tint)}
+.pcard.doing{border-color:var(--warn);background:#F6EAC6}
+.pcard .num{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--ink-3)}
+.pcard h3{font-family:var(--serif);font-size:22px;line-height:1.1}
+.pcard .meta{font-family:var(--mono);font-size:10px;color:var(--ink-3)}
+.pcard .note{font-size:13.5px;background:var(--paper);border-left:3px solid var(--signal);padding:7px 10px;color:var(--ink-2)}
+
+/* Одна кнопка на карточку: показывает состояние и переключает его.
+   Пустой квадратик = ещё не собрано, зелёная с галочкой = собрано. */
+.mark{display:flex;align-items:center;gap:9px;width:100%;text-align:left;padding:9px 12px;border-radius:3px;
+  border:1.5px solid var(--rule-strong);background:var(--paper);color:var(--ink-2);font-weight:500;transition:.12s}
+.mark .box{width:18px;height:18px;flex:none;border:1.5px solid var(--rule-strong);border-radius:3px;background:var(--paper);
+  display:grid;place-items:center;font-size:12px;line-height:1}
+.mark:hover{border-color:var(--green);color:var(--ink)}
+.mark:hover .box{border-color:var(--green)}
+.mark.on{border-color:var(--green);background:var(--green);color:#fff;font-weight:600}
+.mark.on .box{background:#fff;border-color:#fff;color:var(--green);font-weight:700}
+.mark.on:hover{background:var(--green-dark);border-color:var(--green-dark);color:#fff}
+/* Неактивная кнопка: проект ещё не в очереди, либо отметку с него уже не снять. */
+.mark[disabled]{opacity:.42;cursor:default}
+.mark[disabled]:hover{border-color:var(--rule-strong);color:var(--ink-2)}
+.mark[disabled]:hover .box{border-color:var(--rule-strong)}
+.mark.on[disabled]{opacity:.6}
+.mark.on[disabled]:hover{background:var(--green);border-color:var(--green);color:#fff}
+
+.pcard .acts{display:flex;gap:6px;flex-wrap:wrap}
+.pcard .acts .btn{text-decoration:none;background:var(--paper)}
+/* Статус — единственное цветное пятно на карточке. Залитая плашка = состояние. */
+.chip{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 11px;border-radius:20px;border:1.5px solid}
+.chip.todo{border-color:var(--ink-4);color:var(--ink-3);background:transparent;font-weight:400}
+.chip.doing{border-color:var(--warn);color:#fff;background:var(--warn)}
+.chip.stuck{border-color:var(--signal);color:#fff;background:var(--signal)}
+.chip.done{border-color:var(--green);color:#fff;background:var(--green)}
+
+/* ---------- teacher matrix ---------- */
+.scrollx{overflow-x:auto;border:1.5px solid var(--rule-strong);border-radius:3px;background:var(--paper-2)}
+table.mx{border-collapse:collapse;font-size:13.5px;min-width:100%}
+table.mx th,table.mx td{border:1px solid var(--rule);padding:0}
+table.mx thead th{background:var(--paper-3);font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.06em;padding:8px 4px;white-space:nowrap}
+table.mx tbody th{background:var(--paper-2);text-align:left;font-weight:500;padding:7px 12px;white-space:nowrap;position:sticky;left:0;z-index:2;border-right:2px solid var(--rule-strong)}
+table.mx td.cell{width:30px;height:30px;text-align:center;cursor:default}
+.cell i{display:block;width:100%;height:100%;font-style:normal;line-height:30px;font-size:12px}
+.cell .s-todo{background:var(--paper)}
+.cell .s-doing{background:#F0D98A}
+.cell .s-stuck{background:var(--signal);color:#fff;font-weight:700}
+.cell .s-done{background:var(--green);color:#fff}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:10px;color:var(--ink-2);margin:10px 0 0}
+.legend span{display:flex;align-items:center;gap:6px}
+.legend i{width:14px;height:14px;display:block;border:1px solid var(--rule-strong)}
+
+/* Ссылка, оформленная как кнопка (открывает инструкцию в новой вкладке). */
+a.btn{text-decoration:none;display:inline-block;text-align:center;background:var(--paper)}
+/* Номер проекта в шапке матрицы — это ссылка на нужный раздел инструкции. */
+table.mx thead th a.mxh{display:block;color:var(--ink-2);text-decoration:none;padding:1px 3px;border-radius:2px}
+table.mx thead th a.mxh:hover{background:var(--ink);color:var(--paper)}
+.stuck-item{display:flex;gap:14px;align-items:flex-start;border-bottom:1px solid var(--rule);padding:13px 0}
+.stuck-item:last-child{border-bottom:0}
+.stuck-item .badge{flex:none;width:44px;height:44px;border-radius:50%;background:var(--signal);color:#fff;display:grid;place-items:center;font-family:var(--mono);font-size:13.5px;font-weight:700}
+.stuck-item .grow{flex:1;min-width:0}
+.stuck-item .nm{font-weight:600}
+.stuck-item .qt{font-size:13.5px;color:var(--ink-2);background:var(--paper);border-left:3px solid var(--rule-strong);padding:6px 10px;margin-top:5px}
+.muted{color:var(--ink-3)}
+.empty{text-align:center;padding:34px;color:var(--ink-3);font-style:italic;font-family:var(--serif);font-size:19px}
+
+/* ---------- admin ---------- */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--ink);margin:24px 0 18px;flex-wrap:wrap}
+.tabs button{border:1.5px solid var(--rule-strong);border-bottom:0;background:var(--paper-2);padding:9px 18px;margin-right:4px;border-radius:3px 3px 0 0;color:var(--ink-2)}
+.tabs button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+table.list{width:100%;border-collapse:collapse;font-size:13.5px}
+table.list th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);padding:8px 10px;border-bottom:1.5px solid var(--rule-strong)}
+table.list td{padding:9px 10px;border-bottom:1px solid var(--rule)}
+table.list code{white-space:nowrap}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+/* Двухколоночные блоки складываются в одну колонку раньше, чем раньше:
+   на 820 (планшет стоймя) две колонки уже не помещались, и таблицы
+   внутри карточек выпихивали страницу вбок. */
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+
+/* ---------- modal ---------- */
+.modal-bg{position:fixed;inset:0;background:rgba(26,24,20,.55);display:grid;place-items:center;z-index:100;padding:20px}
+.modal{background:var(--paper);border:2px solid var(--ink);border-radius:3px;max-width:520px;width:100%;padding:24px;max-height:86vh;overflow:auto}
+.modal h3{font-family:var(--serif);font-size:26px;margin-bottom:6px}
+.modal .actions{display:flex;gap:9px;justify-content:flex-end;margin-top:18px}
+</style>
+<link rel="stylesheet" href="theme.css?v=1789624934">
+</head>
+<body>
+
+<a class="skiplink" href="#app">Перейти к содержимому</a>
+<div id="app" tabindex="-1"></div>
+
+<script src="config.js?v=1789637737"></script>
+<script>
+/* =====================================================================
+   НАСТРОЙКА — единственное место, где что-то нужно менять руками
+   ===================================================================== */
+
+/* =====================================================================
+   СПИСОК ПРОЕКТОВ — соответствует инструкции
+   ===================================================================== */
+const PROJECTS = [
+  {n:1, t:'Мигающий светодиод',        s:1, m:10},
+  {n:2, t:'Светофор',                  s:1, m:15},
+  {n:3, t:'Кнопка и светодиод',        s:1, m:15},
+  {n:4, t:'Мелодия на зуммере',        s:1, m:20},
+  {n:5, t:'RGB-радуга',                s:1, m:15},
+  {n:6, t:'«Hello World» на LCD 1602', s:2, m:40},
+  {n:7, t:'Метеостанция DHT11 + LCD',  s:3, m:45},
+  {n:8, t:'Умный ночник',              s:2, m:25},
+  {n:9, t:'Серво и потенциометр',      s:2, m:25},
+  {n:10,t:'Джойстик, серво и RGB',     s:3, m:40},
+  {n:11,t:'Кодовый замок',             s:4, m:70},
+  {n:12,t:'ИК-пульт управляет LED',    s:2, m:35},
+  {n:13,t:'Счётчик 0–9 на индикаторе', s:2, m:35},
+  {n:14,t:'Часы 4-разрядные',          s:4, m:70},
+  {n:15,t:'Термометр на LM35',         s:2, m:30},
+  {n:16,t:'Матрица 8×8 + 74HC595',     s:4, m:80},
+  {n:17,t:'Шаговый мотор 28BYJ-48',    s:4, m:50}
+];
+const NPROJ = PROJECTS.length;
+
+/* Фотографии собранных проектов — лежат в папке инструкции.
+   У проекта 16 снимка сборки пока нет, стоит фото самой матрицы. */
+const PHOTO = {
+  1:'proj1-photo.jpg',  2:'proj2-assembled.jpg', 3:'proj3-assembled.jpg',
+  4:'proj4-assembled.jpg', 5:'proj5-photo.jpg',  6:'proj6-photo.jpg',
+  7:'proj7-photo.jpg',  8:'proj8-photo.jpg',     9:'proj9-photo.jpg',
+  10:'proj10-photo.jpg', 11:'proj11-photo.jpg', 12:'proj12-photo.jpg',
+  13:'proj13-photo.jpg', 14:'proj14-photo.jpg', 15:'proj15-photo.jpg',
+  16:'comp-31-matrix.jpg', 17:'proj17-photo.jpg'
+};
+
+const STATUS = {
+  todo:  {label:'Ещё не начинал', short:'·'},
+  doing: {label:'Делаю сейчас',   short:'~'},
+  stuck: {label:'Застрял',        short:'!'},
+  done:  {label:'Собрано ✓',      short:'✓'}
+};
+
+/* =====================================================================
+   ХРАНИЛИЩЕ
+   Два режима. Пока CONFIG.API_URL пустой — всё живёт в браузере
+   (демо). Как только адрес вставлен — все запросы уходят на свой
+   бэкенд (PHP + MySQL на хостинге школы, см. папку backend/ рядом
+   с проектом — не в этом репозитории, там же схема и api.php).
+   ===================================================================== */
+const Store = {
+  db: null,
+  get live(){ return !!CONFIG.API_URL; },
+
+  // --- запрос к своему api.php ---
+  // Раньше здесь была JSONP-обвязка (script-тег вместо fetch) — это делали
+  // из-за Google Apps Script, у которого нет нормального CORS. На своём
+  // сервере на своём же поддомене эти ограничения не действуют, а JSONP
+  // не умеет ни POST, ни нормальных кодов ошибок — обычный fetch и проще,
+  // и безопаснее (сервер не может исполнить в ответе произвольный код).
+  api(action, params){
+    return fetch(CONFIG.API_URL + '?action=' + encodeURIComponent(action), {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: new URLSearchParams(params || {})
+    })
+      .then(r => r.json())
+      .then(d => { if (!d || !d.ok) throw new Error((d && d.error) || 'Сервер не ответил'); return d; })
+      .catch(e => { throw (e instanceof Error ? e : new Error('Не удалось связаться с сервером')); });
+  },
+
+  // Токен преподавателя/директора в сетевом режиме. Сервер отдаёт его при
+  // входе по коду и потом проверяет на каждом изменении. У учеников токена
+  // нет — их граница доверия по-прежнему код группы.
+  token: null,
+
+  async load(){
+    if (this.live){
+      // До входа сервер отдаёт только название школы и имена преподавателей —
+      // списки групп и детей приходят после того, как человек назвал себя.
+      const d = await this.api('bootstrap', {});
+      this.db = {school:d.school, teachers:d.teachers, groups:[], students:[], progress:{}};
+      return this.db;
+    }
+    // Локальный файл, открытый двойным кликом, иногда не получает доступ к хранилищу
+    // браузера. Тогда демо просто работает «на один сеанс», а не падает с ошибкой.
+    let raw = null;
+    try { raw = localStorage.getItem('robo_school_db_v4'); } catch(e){}
+    try { this.db = raw ? JSON.parse(raw) : seedDemo(); } catch(e){ this.db = seedDemo(); }
+    this.persist();
+    return this.db;
+  },
+  // В сетевом режиме это не «база», а слепок того, что видит вошедший:
+  // страница урока (course.html) читает отсюда отметки и список группы.
+  persist(){ try{ localStorage.setItem('robo_school_db_v4', JSON.stringify(this.db)); }catch(e){} },
+
+  // --- вход (только сетевой режим; в демо коды проверяются на месте) ---
+  async loginGroup(code){
+    const d = await this.api('login_group', {code});
+    this.db.groups = [{code:d.group.code, name:d.group.name}];
+    this.db.students = d.students.map(s => Object.assign({groupCode:d.group.code}, s));
+    this.db.progress = d.progress || {};
+    this.persist();
+  },
+  async loginTeacher(teacherId, pin){
+    const d = await this.api('login_teacher_pin', {teacherId, pin});
+    this.token = d.token;
+    this.takeScope(d);
+  },
+  async loginAdmin(pin){
+    const d = await this.api('login_admin_pin', {pin});
+    this.token = d.token;
+    this.takeScope(d);
+  },
+  // Свежие данные для того, кто уже вошёл: ученик — ещё раз по коду группы,
+  // преподаватель и директор — по токену, без повторного ввода кода.
+  async refresh(role, groupCode){
+    if (role === 'student'){ if (groupCode) await this.loginGroup(groupCode); return; }
+    if (!this.token) throw new Error('Вход устарел — войди заново');
+    this.takeScope(await this.api('refresh', {token: this.token}));
+  },
+  takeScope(d){
+    if (d.teachers) this.db.teachers = d.teachers;
+    this.db.groups   = d.groups   || [];
+    this.db.students = d.students || [];
+    this.db.progress = d.progress || {};
+    this.persist();
+  },
+  // Что сервер требует при записи: токен взрослого либо код группы ученика.
+  auth(){ return {token: this.token || '', groupCode: (typeof S !== 'undefined' && S.groupCode) || ''}; },
+
+  async setProgress(studentId, proj, status, note){
+    const key = studentId + ':' + proj;
+    const prev = this.db.progress[key];
+    this.db.progress[key] = {status, note: note||'', updated: new Date().toISOString()};
+    if (this.live){
+      try { await this.api('setProgress', Object.assign({studentId, proj, status, note: note||''}, this.auth())); }
+      catch(e){
+        // Отметку уже показали на экране (в этом весь смысл — не ждать сеть),
+        // но раз сервер её не принял, откатываем — иначе экран будет врать.
+        if (prev) this.db.progress[key] = prev; else delete this.db.progress[key];
+        throw new Error('Не получилось отправить отметку — пропал интернет. Попробуй ещё раз.');
+      }
+    }
+    this.persist();
+  },
+  prog(studentId, proj){
+    return this.db.progress[studentId + ':' + proj] || {status:'todo', note:'', updated:null};
+  },
+
+  // Изменения состава школы: в сетевом режиме сначала сервер, потом экран —
+  // если сервер отказал, на экране ничего не меняется, а ошибка уходит наверх.
+  async addGroup(g){
+    if (this.live){
+      const d = await this.api('addGroup', {name:g.name, teacherId:g.teacherId, token:this.token});
+      g = {code:d.code, name:d.name, teacherId:g.teacherId};   // код придумывает сервер
+    }
+    this.db.groups.push(g); this.persist(); return g;
+  },
+  async delGroup(code){
+    if (this.live) await this.api('delGroup', {code, token:this.token});
+    this.db.groups = this.db.groups.filter(g => g.code !== code);
+    this.db.students = this.db.students.filter(s => s.groupCode !== code);
+    this.persist();
+  },
+  async addTeacher(t){
+    if (this.live){
+      const d = await this.api('addTeacher', {name:t.name, pin:t.pin, token:this.token});
+      t = {id:d.id, name:d.name};   // код на сервере хранится только хэшем, назад не приходит
+    }
+    this.db.teachers.push(t); this.persist();
+  },
+  async delTeacher(id){
+    if (this.live) await this.api('delTeacher', {id, token:this.token});
+    this.db.teachers = this.db.teachers.filter(t => t.id !== id);
+    this.persist();
+  },
+  async addStudents(groupCode, names){
+    let added;
+    if (this.live){
+      const d = await this.api('addStudents', {groupCode, names: names.join('|'), token:this.token});
+      added = d.added.map(s => Object.assign({groupCode}, s));
+    } else {
+      added = names.map(n => ({id:'s'+Math.random().toString(36).slice(2,9), name:n, groupCode, kit:false}));
+    }
+    this.db.students.push(...added); this.persist();
+    return added;
+  },
+  async delStudent(id){
+    if (this.live) await this.api('delStudent', {id, token:this.token});
+    this.db.students = this.db.students.filter(s => s.id !== id);
+    this.persist();
+  },
+  async setKit(id, kit){
+    if (this.live) await this.api('setKit', {id, kit: kit ? '1':'', token:this.token});
+    const s = this.db.students.find(x => x.id === id); if(s) s.kit = kit;
+    this.persist();
+  },
+
+  // helpers
+  group(code){ return this.db.groups.find(g => g.code === code); },
+  studentsOf(code){ return this.db.students.filter(s => s.groupCode === code); },
+  teacher(id){ return this.db.teachers.find(t => t.id === id); },
+  groupsOf(teacherId){ return this.db.groups.filter(g => g.teacherId === teacherId); },
+  doneCount(sid){ let c=0; for(const p of PROJECTS) if(this.prog(sid,p.n).status==='done') c++; return c; },
+
+  // Первый несобранный проект — это и есть тот, над которым ученик работает сейчас.
+  // Никто ничего не нажимает специально: платформа считает это сама.
+  firstOpen(sid){ for(const p of PROJECTS) if(this.prog(sid,p.n).status !== 'done') return p.n; return null; },
+
+  // --- время: сколько дней прошло, когда была последняя активность ---
+  daysSince(iso){
+    if (!iso) return null;
+    return Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+  },
+  lastTouch(sid){
+    let last = null;
+    for (const p of PROJECTS){
+      const r = this.prog(sid, p.n);
+      if (r.updated && (!last || r.updated > last)) last = r.updated;
+    }
+    return last;
+  },
+  // сколько проектов закрыто за период: от daysFrom дней назад до daysTo
+  // ids — набор учеников, по которым считать. Нужен директору, когда он
+  // смотрит не всю школу, а одну группу.
+  doneBetween(daysFrom, daysTo, ids){
+    let c = 0;
+    for (const key in this.db.progress){
+      const r = this.db.progress[key];
+      if (r.status !== 'done' || !r.updated) continue;
+      if (ids && !ids.has(key.slice(0, key.lastIndexOf(':')))) continue;
+      const d = this.daysSince(r.updated);
+      if (d !== null && d >= daysTo && d < daysFrom) c++;
+    }
+    return c;
+  },
+
+  // Состояние карточки: собрано / застрял / делает сейчас / ещё не дошёл
+  state(sid, n){
+    const st = this.prog(sid, n).status;
+    if (st === 'done')  return 'done';
+    if (st === 'stuck') return 'stuck';
+    return this.firstOpen(sid) === n ? 'doing' : 'todo';
+  }
+};
+
+/* =====================================================================
+   ДЕМО-ДАННЫЕ — чтобы платформу можно было показать «живой»
+   ===================================================================== */
+function seedDemo(){
+  const teachers = [
+    {id:'t1', name:'Айгуль Осмоналиева', pin:'1111'},
+    {id:'t2', name:'Нурлан Абдырахманов', pin:'2222'}
+  ];
+  const groups = [
+    {code:'ROBO-7A', name:'Робототехника · 7А · вт/чт 16:00', teacherId:'t1'},
+    {code:'ROBO-5B', name:'Робототехника · 5Б · сб 11:00',    teacherId:'t1'},
+    {code:'ROBO-9V', name:'Робототехника · 9В · пн/ср 18:00', teacherId:'t2'}
+  ];
+  const namesA = ['Азамат Жумабеков','Алина Ким','Бекзат Турсунов','Дана Сатылганова','Ислам Каримов','Камила Асанова','Максат Орозов','Нурсултан Бакиев','Сабина Токтогулова','Тимур Эргешов'];
+  const namesB = ['Айдана Мурзаева','Данияр Сооронбаев','Жанель Абдиева','Кирилл Ким','Малика Юсупова','Санжар Кадыров','Элина Бектурова'];
+  const namesC = ['Адилет Мамытов','Виктория Ли','Гулназ Асылбекова','Джамиля Осмонова','Руслан Ниязов','Фарида Абдуллаева','Эмир Джолдошев','Ясмина Курманова'];
+  const mk = (names, code) => names.map((n,i) => ({id: code.toLowerCase()+'-'+(i+1), name:n, groupCode:code, kit: true}));
+  const students = [...mk(namesA,'ROBO-7A'), ...mk(namesB,'ROBO-5B'), ...mk(namesC,'ROBO-9V')];
+
+  // Что ученик пишет, когда застрял — своя фраза для каждого проекта.
+  const stuckNotes = {
+    1:'Залил код, а лампочка не мигает. Мигает только маленькая на самой плате.',
+    2:'Жёлтый горит, красный и зелёный нет. Провода воткнул как на картинке.',
+    3:'Светодиод горит всё время и на кнопку вообще не реагирует.',
+    4:'Зуммер пищит одним тоном, мелодии нет.',
+    5:'Цвета не плавные, а резко включаются и выключаются.',
+    6:'Подсветка горит, а текста нет. Крутил синий винтик — не помогло.',
+    7:'На экране квадраты вместо температуры. Библиотеку поставил.',
+    8:'Светодиод горит одинаково и днём, и когда закрываю датчик рукой.',
+    9:'Серво дёргается и жужжит, но не поворачивается.',
+    10:'Джойстик двигает серво в одну сторону, обратно не идёт.',
+    11:'Клавиатура не реагирует, в мониторе порта пусто.',
+    12:'Нажимаю на пульт — в мониторе порта одни нули.',
+    13:'Индикатор показывает восьмёрку и не меняется.',
+    14:'Часы показывают 0:00 и дальше не идут.',
+    15:'Температура сама по себе скачет от 20 до 80 градусов.',
+    16:'Матрица светится вся целиком, картинка не появляется.',
+    17:'Мотор гудит, но вал стоит на месте.'
+  };
+
+  // Прогресс идёт строго по порядку, без «дырок»: сначала собранные подряд,
+  // затем один текущий проект, всё остальное — ещё не начато.
+  // 9В (старшие) ушли дальше всех, 5Б набрали недавно и только начали.
+  const progress = {};
+  // Класс не растянут ровной лесенкой по одному ученику на проект. В жизни
+  // вокруг текущего урока стоит кучка, кто-то ушёл вперёд, кто-то отстал.
+  // Поэтому у нескольких человек в группе номер один и тот же — а значит и
+  // застревают они в одном месте, и преподавателю есть смысл разбирать их
+  // подряд. 9В (старшие) ушли дальше всех, 5Б набрали недавно и только начали.
+  const SPREAD = {
+    'ROBO-7A': [5,5,6,5,7,4,6,8,7,9],
+    'ROBO-5B': [2,2,3,1,2,4,3],
+    'ROBO-9V': [12,12,13,11,14,12,16,17]
+  };
+  // Кто застрял и сколько дней назад написал. Список, а не формула: в группе
+  // всегда есть общий затык — несколько человек уперлись в одно и то же место
+  // (пайка гребёнки на LCD, библиотека датчика) — и есть одиночки, до которых
+  // неделю никто не дошёл: это то, что должен увидеть директор.
+  // В 7А ученики 0, 1 и 3 стоят на одном проекте — они и дают общий затык.
+  const STUCK = {
+    'ROBO-7A': {0:9, 1:2, 3:1, 7:11, 9:3},
+    'ROBO-5B': {1:8, 4:2},
+    'ROBO-9V': {2:12, 5:1}
+  };
+  // сколько дней назад группа начала заниматься — от этого зависит,
+  // растянуты её отметки на все шесть недель графика или только на последние
+  const opened  = {'ROBO-7A':63, 'ROBO-5B':26, 'ROBO-9V':72};
+  const counters = {};
+  const ago = (days) => new Date(Date.now() - days * 86400000).toISOString();
+
+  students.forEach(st => {
+    const i = counters[st.groupCode] = (counters[st.groupCode] || 0);
+    counters[st.groupCode]++;
+    const spread = SPREAD[st.groupCode];
+    const done = spread[i % spread.length];          // сколько проектов собрано подряд
+
+    // Даты разложены по прошедшим неделям, иначе блоки про темп и «не двигаются»
+    // показывали бы пустоту: у всех отметок была бы одна дата — сегодняшняя.
+    // Отметки ученика растянуты на весь срок жизни группы, а не сжаты к сегодня,
+    // иначе график темпа превращается в ровно растущую лесенку — так не бывает.
+    const stale   = (i % 7 === 3);                   // этот давно не заходил
+    const lastGap = stale ? 15 + (i % 6) : (i % 5);  // дней с последней отметки
+    const span    = opened[st.groupCode] - lastGap;  // на сколько дней растянут его путь
+    const step    = Math.max(2, Math.round(span / (done + 1)));
+
+    for (let p = 1; p <= done; p++){
+      // лёгкий разброс, чтобы отметки не ложились строго по сетке
+      const jitter = ((i + p) % 3) - 1;
+      progress[st.id+':'+p] = {status:'done', note:'', updated: ago(lastGap + (done - p) * step + jitter)};
+    }
+
+    // Застрявшие берутся из списка выше: часть группы стоит на одном проекте,
+    // часть — поодиночке, и к некоторым никто не подошёл дольше недели.
+    const next = done + 1;
+    const stuckIdx = STUCK[st.groupCode] || {};
+    if (next <= NPROJ && (i in stuckIdx)){
+      const stuckDays = stuckIdx[i];
+      const hourShift = 5 + ((i * 7) % 9);   // разные часы, иначе у всех одно время
+      progress[st.id+':'+next] = {status:'stuck', note:stuckNotes[next]||'',
+        updated: new Date(Date.now() - stuckDays*86400000 - hourShift*3600000).toISOString()};
+    }
+  });
+
+  return {school:{name:CONFIG.SCHOOL_NAME, adminPin:'0000'}, teachers, groups, students, progress};
+}
+
+/* =====================================================================
+   СОСТОЯНИЕ ЭКРАНА
+   ===================================================================== */
+let S = {screen:'login', role:null, teacherId:null, pendingTeacherId:null, studentId:null, groupCode:null, adminGroup:null, tab:'groups', modal:null, err:''};
+
+// <template> нужен, чтобы браузер правильно разбирал строки таблиц (<tr>, <td>)
+const $ = (h) => { const t=document.createElement('template'); t.innerHTML=h.trim(); return t.content.firstElementChild; };
+const esc = (s) => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+// Когда ученик написал «не получается». Преподавателю важно не «12 дней назад»,
+// а конкретно: сегодня на занятии или ещё на прошлой неделе дома.
+const MONTHS_R = ['января','февраля','марта','апреля','мая','июня',
+                  'июля','августа','сентября','октября','ноября','декабря'];
+const fmtWhen = (iso) => {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  const two = (n) => String(n).padStart(2,'0');
+  const time = two(d.getHours()) + ':' + two(d.getMinutes());
+  const now = new Date();
+  const day   = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const diff  = Math.round((today - day) / 86400000);
+  if (diff === 0) return 'сегодня, ' + time;
+  if (diff === 1) return 'вчера, ' + time;
+  const date = d.getDate() + ' ' + MONTHS_R[d.getMonth()];
+  return (d.getFullYear() === now.getFullYear() ? date : date + ' ' + d.getFullYear()) + ', ' + time;
+};
+
+// В узкой колонке полное название группы («Робототехника · 7А · вт/чт 16:00»)
+// переносится на две строки и мешает читать. Берём из него только сам класс.
+const gShort = (g) => {
+  if (!g) return '—';
+  const parts = String(g.name).split('·').map(s => s.trim()).filter(Boolean);
+  return parts.length > 1 ? parts[1] : parts[0];
+};
+
+// Короткое имя группы для узких мест: «Робототехника · 5Б · сб 11:00» -> «5Б».
+// Если имя без разделителей — берём код группы, он всегда есть.
+const shortGroup = (g) => {
+  const p = String(g.name || '').split('·');
+  return ((p[1] || '').trim()) || g.code || '';
+};
+
+// «1 день / 2 дня / 5 дней» — иначе в отчёте будет «5 день»
+const plural = (n, one, few, many) => {
+  const a = Math.abs(n) % 100, b = a % 10;
+  if (a > 10 && a < 20) return many;
+  if (b > 1 && b < 5)   return few;
+  if (b === 1)          return one;
+  return many;
+};
+const stars = (n) => '★'.repeat(n) + '☆'.repeat(4-n);
+
+function save(){ try{ localStorage.setItem('robo_session', JSON.stringify({role:S.role, teacherId:S.teacherId, studentId:S.studentId, groupCode:S.groupCode, adminGroup:S.adminGroup, token:Store.token})); }catch(e){} }
+function restore(){
+  try{
+    const r = JSON.parse(localStorage.getItem('robo_session')||'null');
+    if(!r || !r.role) return false;
+    // В сетевом режиме списков ещё нет — их подтянет Store.refresh(), там же и проверим.
+    if(!Store.live && r.role==='student' && !Store.db.students.some(s=>s.id===r.studentId)) return false;
+    if(!Store.live && r.role==='teacher' && !Store.db.teachers.some(t=>t.id===r.teacherId)) return false;
+    Store.token = r.token || null; delete r.token;
+    Object.assign(S, r, {screen:r.role});
+    return true;
+  }catch(e){ return false; }
+}
+/* Преподаватель отмечает результат во вкладке с уроком, а список группы
+   открыт в этой. Возвращаясь сюда, он должен увидеть свежий список, а не
+   тот, что был до отметки. Обновляем при возврате на вкладку — но только
+   если данные правда изменились и на экране не открыт диалог, иначе
+   перерисовка закрыла бы то, что человек в этот момент заполняет. */
+// Запоминаем состояние сразу, чтобы первый же возврат на вкладку не вызывал
+// перерисовку на пустом месте.
+let lastDbSeen = (() => { try { return localStorage.getItem('robo_school_db_v4'); } catch(e){ return null; } })();
+let refreshing = false;
+async function refreshOnReturn(){
+  if (S.screen === 'login' || S.modal) return;
+  if (Store.live){
+    if (refreshing) return;
+    refreshing = true;
+    try { await Store.refresh(S.role, S.groupCode); render(); }
+    catch(e){ /* нет сети — оставляем то, что есть на экране */ }
+    finally { refreshing = false; }
+    return;
+  }
+  let raw = null;
+  try { raw = localStorage.getItem('robo_school_db_v4'); } catch(e){}
+  if (!raw || raw === lastDbSeen) return;
+  lastDbSeen = raw;
+  try { Store.db = JSON.parse(raw); } catch(e){ return; }
+  render();
+}
+// Главный сигнал — событие storage: браузер сам сообщает этой вкладке, что
+// соседняя вкладка (урок) записала новые данные. Срабатывает сразу, даже
+// если преподаватель ещё не переключился обратно.
+window.addEventListener('storage', (e) => {
+  if (!e.key || e.key === 'robo_school_db_v4') refreshOnReturn();
+});
+// Подстраховка на случай, если событие не дошло: переключение вкладок
+// браузеры сообщают через visibilitychange, возврат из другого окна — focus.
+window.addEventListener('focus', refreshOnReturn);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') refreshOnReturn();
+});
+
+function logout(){
+  try{ localStorage.removeItem('robo_session'); }catch(e){}
+  Store.token = null;
+  // В сетевом режиме слепок класса на этом устройстве больше никому не нужен.
+  if (Store.live){ Store.db.groups = []; Store.db.students = []; Store.db.progress = {}; Store.persist(); }
+  S={screen:'login',role:null,teacherId:null,pendingTeacherId:null,studentId:null,groupCode:null,adminGroup:null,tab:'groups',modal:null,err:''}; render();
+}
+
+/* =====================================================================
+   РЕНДЕР
+   ===================================================================== */
+/* Короткое сообщение внизу экрана: подтверждает, что действие сработало.
+   Живёт вне #app, поэтому переживает перерисовку страницы. */
+function toast(text){
+  let box = document.getElementById('toasts');
+  if (!box){ box = $(`<div class="toasts" id="toasts"></div>`); document.body.appendChild(box); }
+  const t = $(`<div class="toast">${esc(text)}</div>`);
+  box.appendChild(t);
+  requestAnimationFrame(() => t.classList.add('in'));
+  setTimeout(() => { t.classList.remove('in'); setTimeout(() => t.remove(), 260); }, 2800);
+}
+
+let _prevScreen = null;
+function render(){
+  const app = document.getElementById('app');
+  // Страница перерисовывается целиком, поэтому запоминаем, где человек стоял:
+  // иначе после нажатия «Собрал» его выбрасывает наверх списка.
+  const keepY = (_prevScreen === S.screen) ? window.scrollY : 0;
+  _prevScreen = S.screen;
+  app.innerHTML = '';
+  // Серой плашки «Демонстрация…» больше нет — Максат убрал её с экрана.
+  // Сброс демо-данных перед показом: открыть index.html?reset (см. СТАРТ).
+
+  if (S.screen === 'login')        {
+    // Фотография собранного проекта справа, растворяется в белый влево.
+    app.appendChild($(`<div class="login-bg" style="--shot:url('guide/assets/proj11-photo.jpg')">
+      <div class="login-bg-cap">
+        <div class="n">Робототехника<br>на Arduino</div>
+        <div class="t">от первого мигающего светодиода<br>до шагового мотора и кодового замка</div>
+      </div>
+    </div>`));
+    app.appendChild(viewLogin());
+  }
+  else {
+    app.appendChild(topbar());
+    const w = $(`<div class="wrap"></div>`);
+    if (S.screen === 'student') w.appendChild(viewStudent());
+    if (S.screen === 'teacher') w.appendChild(viewTeacher());
+    if (S.screen === 'admin')   w.appendChild(viewAdmin());
+    app.appendChild(w);
+  }
+  if (S.modal) app.appendChild(S.modal());
+
+  if (keepY) window.scrollTo(0, keepY);
+  // подсветка карточки, которую только что изменили
+  if (S.flash){
+    const el = app.querySelector('[data-proj="' + S.flash + '"]');
+    if (el){ el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 1100); }
+    S.flash = null;
+  }
+}
+
+function topbar(){
+  const who = S.role==='student' ? Store.db.students.find(s=>s.id===S.studentId)
+            : S.role==='teacher' ? Store.teacher(S.teacherId) : {name:'Администратор'};
+  const roleLabel = {student:'Ученик', teacher:'Преподаватель', admin:'Администратор'}[S.role];
+  const bar = $(`<div class="topbar"><div class="topbar-in">
+    <div class="brand" title="${esc(Store.db.school.name)}"><img class="lg-wide" src="logo.svg" alt="${esc(Store.db.school.name)}"><img class="lg-mark" src="logo-block.svg" alt=""><img class="lg-slim" src="logo-block.svg" alt=""></div>
+    <div class="spacer"></div>
+    <div class="who">${roleLabel}<b>${esc(who ? who.name : '')}</b></div>
+    <button class="btn ghost sm" id="lo">Выйти</button>
+  </div></div>`);
+  bar.querySelector('#lo').onclick = logout;
+  // Когда шапка сжата в полоску, знак слева работает как «наверх»:
+  // нажал — страница уехала к началу, полная шапка вернулась сама.
+  bar.querySelector('.brand').onclick = () => window.scrollTo({top:0, behavior:'smooth'});
+  return bar;
+}
+
+/* ---------------------------- ВХОД ---------------------------- */
+function viewLogin(){
+  const el = $(`<div class="login"></div>`);
+
+  // Название школы на входе: до входа шапки ещё нет, а человек должен сразу
+  // видеть, куда он попал.
+  el.appendChild($(`<div class="login-brand"><img class="lg-wide" src="logo-blue.svg" alt="${esc(Store.db.school.name)}"><img class="lg-mark" src="logo-block-blue.svg" alt=""></div>`));
+
+  if (!S.role){
+    el.appendChild($(`<h1>Кто ты?</h1>`));
+    el.appendChild($(`<p class="lede">Платформа курса робототехники на Arduino. Выбери, как ты сюда заходишь.</p>`));
+    const roles = $(`<div class="roles">
+      <button class="role" data-r="student"><span class="ic">У</span><span><b>Я ученик</b><span>Отмечаю, какие проекты собрал, и говорю преподавателю, если застрял</span></span></button>
+      <button class="role" data-r="teacher"><span class="ic">П</span><span><b>Я преподаватель</b><span>Вижу всю группу на одном экране: кто где, кто застрял и на чём</span></span></button>
+      <button class="role" data-r="admin"><span class="ic">А</span><span><b>Я администратор</b><span>Группы, преподаватели, ученики, наборы и общая статистика школы</span></span></button>
+    </div>`);
+    roles.querySelectorAll('.role').forEach(b => b.onclick = () => { S.role = b.dataset.r; S.err=''; render(); });
+    el.appendChild(roles);
+    return el;
+  }
+
+  if (S.role === 'student' && !S.groupCode){
+    const p = $(`<div class="panel">
+      <h1 style="font-size:31px;margin-bottom:6px">Код группы</h1>
+      <p class="lede" style="margin-bottom:22px">Преподаватель выдал вам короткий код — например ${Store.live ? 'K7MPQ4ZX' : 'ROBO-7A'}. Введи его, чтобы найти свой класс.</p>
+      <div class="field"><label>Код группы</label><input id="gc" placeholder="${Store.live ? 'K7MPQ4ZX' : 'ROBO-7A'}" autocomplete="off"></div>
+      <div class="err">${esc(S.err)}</div>
+      <div style="display:flex;gap:9px;margin-top:12px"><button class="btn primary" id="go">Дальше</button><button class="btn ghost" id="bk">Назад</button></div>
+    </div>`);
+    const go = async () => {
+      const code = p.querySelector('#gc').value.trim().toUpperCase();
+      if (Store.live){
+        try { await Store.loginGroup(code); }
+        catch(e){ S.err = /нет/.test(e.message) ? 'Такой группы нет. Проверь код — его знает преподаватель.' : e.message; render(); return; }
+      } else if (!Store.group(code)){ S.err='Такой группы нет. Проверь код — его знает преподаватель.'; render(); return; }
+      S.groupCode = code; S.err=''; render();
+    };
+    p.querySelector('#go').onclick = go;
+    p.querySelector('#gc').onkeydown = e => { if(e.key==='Enter') go(); };
+    p.querySelector('#bk').onclick = () => { S.role=null; S.err=''; render(); };
+    el.appendChild(p); return el;
+  }
+
+  if (S.role === 'student'){
+    const list = Store.studentsOf(S.groupCode);
+    const p = $(`<div class="panel">
+      <h1 style="font-size:31px;margin-bottom:6px">Найди себя</h1>
+      <p class="lede" style="margin-bottom:20px">${esc(Store.group(S.groupCode).name)}</p>
+      <div class="name-list"></div>
+      <button class="btn ghost" id="bk">Другая группа</button>
+    </div>`);
+    const nl = p.querySelector('.name-list');
+    if (!list.length) nl.appendChild($(`<div class="empty">
+      <div class="ico">·</div>
+      <div class="t">В этой группе пока никого нет</div>
+      <div class="s">Список учеников заводит администратор. Проверь код группы — возможно, он от другого класса.</div>
+    </div>`));
+    list.forEach(s => {
+      const b = $(`<button>${esc(s.name)}</button>`);
+      b.onclick = () => { S.studentId=s.id; S.screen='student'; save(); render(); };
+      nl.appendChild(b);
+    });
+    p.querySelector('#bk').onclick = () => { S.groupCode=null; render(); };
+    el.appendChild(p); return el;
+  }
+
+  // ВХОД ПРЕПОДАВАТЕЛЯ — в два шага: выбор себя из списка, потом свой код.
+  // Раньше код не спрашивали вовсе (только имя из списка) — удобно для демо
+  // с выдуманными именами, но на настоящих детях это открытая дверь: любой
+  // с телефона выбирает имя учителя и видит весь класс. Список остаётся —
+  // это быстрее, чем печатать имя, — а код теперь обязателен для входа.
+  if (S.role === 'teacher' && !S.pendingTeacherId){
+    const list = Store.db.teachers;
+    const p = $(`<div class="panel">
+      <h1 style="font-size:31px;margin-bottom:6px">Кто ведёт занятие?</h1>
+      <p class="lede" style="margin-bottom:20px">Выбери себя из списка преподавателей школы.</p>
+      <div class="name-list"></div>
+      <button class="btn ghost" id="bk">Назад</button>
+    </div>`);
+    const nl = p.querySelector('.name-list');
+    if (!list.length) nl.appendChild($(`<div class="empty">
+      <div class="ico">·</div>
+      <div class="t">Преподаватели ещё не заведены</div>
+      <div class="s">Список преподавателей заводит администратор школы.</div>
+    </div>`));
+    list.forEach(t => {
+      const gs = Store.groupsOf(t.id).map(g => g.code).join(' · ');
+      const b = $(`<button>${esc(t.name)}${gs ? `<span class="sub">${esc(gs)}</span>` : ''}</button>`);
+      b.onclick = () => { S.pendingTeacherId = t.id; S.err=''; render(); };
+      nl.appendChild(b);
+    });
+    p.querySelector('#bk').onclick = () => { S.role=null; S.err=''; render(); };
+    el.appendChild(p); return el;
+  }
+
+  // Второй шаг — код именно этого преподавателя (его выдаёт администратор).
+  if (S.role === 'teacher' && S.pendingTeacherId){
+    const t = Store.teacher(S.pendingTeacherId);
+    const p = $(`<div class="panel">
+      <h1 style="font-size:31px;margin-bottom:6px">${esc(t ? t.name : '')}</h1>
+      <p class="lede" style="margin-bottom:22px">Введи свой код — его выдаёт администратор школы.</p>
+      <div class="field"><label>Код</label><input id="pin" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" style="-webkit-text-security:disc;text-security:disc"></div>
+      <div class="err">${esc(S.err)}</div>
+      <div style="display:flex;gap:9px;margin-top:12px"><button class="btn primary" id="go">Войти</button><button class="btn ghost" id="bk">Назад</button></div>
+    </div>`);
+    const go = async () => {
+      const pin = p.querySelector('#pin').value.trim();
+      if (!t){ S.err='Код не подошёл.'; render(); return; }
+      if (Store.live){
+        try { await Store.loginTeacher(t.id, pin); }
+        catch(e){ S.err = e.message; render(); return; }
+      } else if (pin !== t.pin){ S.err='Код не подошёл.'; render(); return; }
+      S.teacherId = t.id; S.pendingTeacherId = null; S.screen = 'teacher';
+      S.groupCode = (Store.groupsOf(t.id)[0] || {}).code || null;
+      S.err = ''; save(); render();
+    };
+    p.querySelector('#go').onclick = go;
+    p.querySelector('#pin').onkeydown = e => { if(e.key==='Enter') go(); };
+    p.querySelector('#bk').onclick = () => { S.pendingTeacherId=null; S.err=''; render(); };
+    el.appendChild(p); return el;
+  }
+
+  // преподаватель / админ — по коду
+  const isT = S.role === 'teacher';
+  const p = $(`<div class="panel">
+    <h1 style="font-size:31px;margin-bottom:6px">${isT?'Вход преподавателя':'Вход администратора'}</h1>
+    <p class="lede" style="margin-bottom:22px">${isT?'Введи свой код — его выдаёт администратор школы.':'Введи код администратора школы.'}</p>
+    <div class="field"><label>Код</label><input id="pin" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" style="-webkit-text-security:disc;text-security:disc"></div>
+    <div class="err">${esc(S.err)}</div>
+    <div style="display:flex;gap:9px;margin-top:12px"><button class="btn primary" id="go">Войти</button><button class="btn ghost" id="bk">Назад</button></div>
+  </div>`);
+  const go = async () => {
+    const pin = p.querySelector('#pin').value.trim();
+    if (isT){
+      const t = Store.db.teachers.find(x => x.pin === pin);
+      if (!t){ S.err='Код не подошёл.'; render(); return; }
+      S.teacherId=t.id; S.screen='teacher'; S.groupCode = (Store.groupsOf(t.id)[0]||{}).code || null; S.err=''; save(); render();
+    } else {
+      if (Store.live){
+        try { await Store.loginAdmin(pin); }
+        catch(e){ S.err = e.message; render(); return; }
+      } else if (pin !== Store.db.school.adminPin){ S.err='Код не подошёл.'; render(); return; }
+      S.screen='admin'; S.err=''; save(); render();
+    }
+  };
+  p.querySelector('#go').onclick = go;
+  p.querySelector('#pin').onkeydown = e => { if(e.key==='Enter') go(); };
+  p.querySelector('#bk').onclick = () => { S.role=null; S.err=''; render(); };
+  el.appendChild(p); return el;
+}
+
+/* ------------------------ КАБИНЕТ УЧЕНИКА ------------------------ */
+function viewStudent(){
+  const me = Store.db.students.find(s => s.id === S.studentId);
+  const done = Store.doneCount(me.id);
+  const pct = Math.round(done / NPROJ * 100);
+  // Прогресс идёт строго по порядку. Отметить можно только текущий проект,
+  // снять отметку — только с последнего собранного. Так в прогрессе не появится дырок.
+  // «Следующий по программе» — первый несобранный. При свободном порядке это
+  // остаётся правдой: платформа не утверждает, чем ученик занят прямо сейчас,
+  // а показывает, куда идти дальше по курсу.
+  const openNow = Store.firstOpen(me.id);
+  const cur = PROJECTS.find(p => p.n === openNow) || null;
+
+  const el = document.createDocumentFragment();
+  const hero = $(`<div class="hero">
+    <div class="big">${done}<small> / ${NPROJ}</small><div style="color:var(--ink-3);margin-top:8px">проектов собрано</div></div>
+    <div class="grow">
+      <div style="font-family:var(--serif);font-size:26px;margin-bottom:4px">${pct < 15 ? 'Только начинаем' : pct < 50 ? 'Хорошо идёшь' : pct < 100 ? 'Больше половины позади' : 'Весь курс пройден!'}</div>
+      <p class="muted" style="font-size:13.5px">${cur ? 'Следующий по программе — <b style="color:var(--ink)">Проект ' + String(cur.n).padStart(2,'0') + ' · ' + esc(cur.t) + '</b>' : 'Все проекты закрыты. Красиво.'}</p>
+      <div class="bar" style="margin-top:12px"><i style="width:${pct}%"></i></div>
+    </div>
+  </div>`);
+
+  // Ученик возвращается из инструкции — и текущий проект уже здесь, вместе с обеими
+  // кнопками. Иначе пришлось бы каждый раз искать свою карточку среди семнадцати.
+  if (cur){
+    // Фотография текущего проекта — справа в синем блоке, затемнённая
+    // и растворяющаяся в фон. Текст слева лежит на плотном синем, поэтому
+    // читаемость не страдает.
+    hero.appendChild($(`<div class="hero-photo" style="background-image:url('guide/assets/${PHOTO[cur.n]}')"></div>`));
+
+    const acts = $(`<div class="hero-acts"></div>`);
+    acts.appendChild($(`<a class="btn" href="${CONFIG.GUIDE_URL}#proj-${cur.n}">Приступить</a>`));
+    const hm = $(`<button class="mark"><span class="box"></span>Собрал</button>`);
+    hm.onclick = async () => {
+      try { await Store.setProgress(me.id, cur.n, 'done', ''); }
+      catch(e){ toast(e.message); return; }
+      S.flash = cur.n;
+      const nx = PROJECTS.find(x => x.n === Store.firstOpen(me.id));
+      toast(nx ? 'Проект ' + String(cur.n).padStart(2,'0') + ' собран. Дальше — ' + nx.t
+               : 'Весь курс пройден!');
+      render();
+    };
+    acts.appendChild(hm);
+    hero.querySelector('.grow').appendChild(acts);
+  }
+  el.appendChild(hero);
+
+  el.appendChild($(`<div class="section-head"><h2>Мои проекты</h2><span class="sub">Отмечай сам · преподаватель это видит</span></div>`));
+
+  const grid = $(`<div class="proj-grid"></div>`);
+  PROJECTS.forEach(p => {
+    const pr = Store.prog(me.id, p.n);
+    const st = Store.state(me.id, p.n);
+    const isDone = st === 'done';
+
+    const c = $(`<div class="pcard ${st}" data-proj="${p.n}">
+      <div class="pthumb">${isDone ? `<span class="medal" aria-hidden="true">✓</span>` : ''}<img loading="lazy" src="guide/assets/${PHOTO[p.n]}" alt="${esc(p.t)}"></div>
+      <div class="num">${String(p.n).padStart(2,'0')} · ${stars(p.s)} · ${p.m} мин</div>
+      <h3>${esc(p.t)}</h3>
+      ${st==='stuck' ? `<div><span class="chip stuck">Застрял</span></div>` : ''}
+      ${st==='doing' ? `<div><span class="chip doing">Следующий</span></div>` : ''}
+      ${st==='stuck' && pr.note ? `<div class="note">${esc(pr.note)}</div>` : ''}
+    </div>`);
+
+    // Урок открывается нажатием на саму карточку — отдельная кнопка не нужна.
+    // Остаётся только «Не получается».
+    const acts = $(`<div class="acts"></div>`);
+    const help = $(`<button class="btn ghost tiny">${st==='stuck' ? 'Изменить' : 'Не получается'}</button>`);
+    help.onclick = (e) => { e.stopPropagation(); askStuck(me.id, p); };
+    acts.appendChild(help);
+    c.appendChild(acts);
+
+    // Кнопка-переключатель внизу: она же показывает состояние, она же его меняет.
+    // Порядок свободный: ученик может начать с любого проекта. Кто-то приходит
+    // уже умея, и заставлять его собирать мигающий светодиод ради очереди — значит
+    // потерять его на первом занятии.
+    const hint = isDone ? 'Нажми, если отметил по ошибке' : 'Нажми, когда проект заработает';
+    const mark = $(`<button class="mark ${isDone?'on':''}" title="${hint}">
+      <span class="box">${isDone?'✓':''}</span>Собрал
+    </button>`);
+    mark.onclick = async (e) => {
+      e.stopPropagation();
+      try { await Store.setProgress(me.id, p.n, isDone ? 'todo' : 'done', ''); }
+      catch(err){ toast(err.message); return; }
+      S.flash = p.n;
+      if (!isDone){
+        const nx = PROJECTS.find(x => x.n === Store.firstOpen(me.id));
+        toast(nx ? 'Проект ' + String(p.n).padStart(2,'0') + ' собран. Дальше — ' + nx.t
+                 : 'Проект ' + String(p.n).padStart(2,'0') + ' собран. Весь курс пройден!');
+      } else {
+        toast('Отметка снята с проекта ' + String(p.n).padStart(2,'0'));
+      }
+      render();
+    };
+    // «Собрал» и «Не получается» — обычный текст в одну строку, без рамок и
+    // белых плашек: они сидят прямо на фоне карточки. Поэтому обе живут в
+    // одном ряду .acts, а «Собрал» идёт первым — это главное действие.
+    acts.insertBefore(mark, help);
+
+    // Карточка целиком открывает урок: и мышью, и с клавиатуры (Enter или пробел).
+    const openLesson = () => { location.href = CONFIG.GUIDE_URL + '#proj-' + p.n; };
+    c.classList.add('clickable');
+    c.setAttribute('role', 'link');
+    c.setAttribute('tabindex', '0');
+    c.setAttribute('aria-label', 'Открыть урок: проект ' + p.n + ', ' + p.t);
+    c.onclick = openLesson;
+    c.onkeydown = (e) => {
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openLesson(); }
+    };
+
+    grid.appendChild(c);
+  });
+  el.appendChild(grid);
+  const w = document.createElement('div'); w.appendChild(el); return w;
+}
+
+function askStuck(studentId, p){
+  const prev = Store.prog(studentId, p.n).note;
+  S.modal = () => {
+    const bg = $(`<div class="modal-bg"><div class="modal">
+      <h3>Что не получается?</h3>
+      <p class="muted" style="font-size:13.5px">Проект ${String(p.n).padStart(2,'0')} · ${esc(p.t)}</p>
+      <div class="field" style="margin-top:16px"><label>Опиши своими словами</label>
+        <textarea id="nt" rows="4" placeholder="Например: подсветка горит, а текста на экране нет">${esc(prev)}</textarea></div>
+      <p class="muted" style="font-size:13.5px">Преподаватель увидит это у себя и подойдёт к тебе на занятии.</p>
+      <div class="actions"><button class="btn ghost" id="cancel">Отмена</button><button class="btn primary" id="ok">Отправить</button></div>
+    </div></div>`);
+    bg.querySelector('#cancel').onclick = () => { S.modal=null; render(); };
+    bg.querySelector('#ok').onclick = async () => {
+      const note = bg.querySelector('#nt').value.trim();
+      S.modal=null;
+      try { await Store.setProgress(studentId, p.n, 'stuck', note); }
+      catch(err){ toast(err.message); render(); return; }
+      S.flash = p.n;
+      toast('Преподаватель увидит это у себя');
+      render();
+    };
+    return bg;
+  };
+  render();
+}
+
+/* --------------------- КАБИНЕТ ПРЕПОДАВАТЕЛЯ --------------------- */
+function viewTeacher(){
+  const groups = Store.groupsOf(S.teacherId);
+  const el = document.createDocumentFragment();
+
+  if (!groups.length){ el.appendChild($(`<div class="card" style="margin-top:34px"><div class="empty">
+    <div class="ico">👥</div>
+    <div class="t">На вас пока не назначено ни одной группы</div>
+    <div class="s">Группы создаёт администратор школы и назначает преподавателя. Как только вашу группу заведут, она появится здесь сама.</div>
+  </div></div>`)); const w=document.createElement('div'); w.appendChild(el); return w; }
+  if (!groups.some(g => g.code === S.groupCode)) S.groupCode = groups[0].code;
+
+  /* Выбор группы — тот же переключатель, что у директора: до шести групп ряд
+     кнопок, дальше выпадающий список. У преподавателя обычно одна-две группы,
+     так что почти всегда это кнопки, и переключение стоит один клик вместо
+     двух. Если группа всего одна, переключателя нет вовсе: выбирать не из
+     чего, и кнопка-одиночка только сбивала бы с толку. */
+  const gCur = Store.group(S.groupCode);
+  const sel = $(`<div class="section-head has-sw"><h2>Группа</h2>${
+    groups.length === 1 && gCur ? `<span class="sub">${esc(gCur.name)}</span>` : ''}</div>`);
+  if (groups.length > 1){
+    const box = $(`<div class="gsw"></div>`);
+    if (groups.length > 6){
+      const s2 = $(`<select>${groups.map(g => `<option value="${esc(g.code)}"${g.code===S.groupCode?' selected':''}>${esc(g.name)}</option>`).join('')}</select>`);
+      s2.onchange = e => { S.groupCode = e.target.value; save(); render(); };
+      box.appendChild(s2);
+    } else {
+      groups.forEach(g => {
+        const b = $(`<button type="button" class="${g.code===S.groupCode?'on':''}" title="${esc(g.name)}">${esc(shortGroup(g))}</button>`);
+        b.onclick = () => { S.groupCode = g.code; save(); render(); };
+        box.appendChild(b);
+      });
+    }
+    sel.appendChild(box);
+  }
+  el.appendChild(sel);
+
+  const list = Store.studentsOf(S.groupCode);
+  const totalCells = list.length * NPROJ;
+  let doneC=0, stuckList=[];
+  list.forEach(s => PROJECTS.forEach(p => {
+    const pr = Store.prog(s.id, p.n);
+    if (pr.status==='done') doneC++;
+    if (pr.status==='stuck') stuckList.push({s, p, note:pr.note, at:pr.updated});
+  }));
+  // Порядок застрявших — по проектам, а не по ученикам. Дорого не дойти до
+  // парты, дорого перезагрузить голову: «проект 04, зуммер, полярность» —
+  // это одна картина, и пока она в голове, преподаватель поможет всем, кто
+  // застрял на 04, почти не глядя в текст. А если после 04 сразу 10, урок
+  // приходится читать заново. Внутри проекта первым идёт тот, кто ждёт
+  // дольше. Даже когда у всех разные проекты, порядок по номеру — движение
+  // в одну сторону по книге, а не метание из конца в конец.
+  stuckList.sort((a,b) => (a.p.n - b.p.n) || String(a.at||'').localeCompare(String(b.at||'')));
+
+  const avg = list.length ? (list.reduce((a,s)=>a+Store.doneCount(s.id),0)/list.length) : 0;
+
+  /* --- Урок сегодня ----------------------------------------------------
+     Материал нужен преподавателю в начале занятия, а не только когда
+     кто-то застрял. Проект платформа определяет сама — берёт тот,
+     на котором стоит большинство группы. Выпадающий список рядом,
+     чтобы открыть любой другой: например, подготовиться к следующему. */
+  if (list.length){
+    const tally = {};
+    list.forEach(s => { const n = Store.firstOpen(s.id); if (n) tally[n] = (tally[n] || 0) + 1; });
+    let lessonN = PROJECTS[0].n, lessonCnt = 0;
+    Object.keys(tally).forEach(k => { if (tally[k] > lessonCnt){ lessonCnt = tally[k]; lessonN = +k; } });
+    const lp = PROJECTS.find(p => p.n === lessonN) || PROJECTS[0];
+
+    const today = $(`<div class="card" style="display:flex;gap:22px;align-items:center;flex-wrap:wrap;margin-bottom:8px;padding:26px 26px">
+      <div style="flex:1;min-width:250px">
+        <div style="font-size:12px;font-weight:600;color:var(--ink-3);margin-bottom:8px">Урок сегодня</div>
+        <div style="font-family:'Instrument Serif',Georgia,serif;font-weight:400;letter-spacing:.01em;font-size:26px;line-height:1.12">${String(lp.n).padStart(2,'0')} · ${esc(lp.t)}</div>
+        <div class="muted" style="font-size:12.5px;margin-top:8px">Это текущий проект у ${lessonCnt} из ${list.length} учеников группы</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <select id="lsel" style="border:1.5px solid var(--rule-strong);background:var(--paper);padding:12px 14px;border-radius:4px;max-width:320px;font-size:12.5px">
+          ${PROJECTS.map(p => `<option value="${p.n}" ${p.n===lessonN?'selected':''}>${String(p.n).padStart(2,'0')} · ${esc(p.t)}</option>`).join('')}
+        </select>
+        <a class="btn primary" id="lopen" target="_blank" href="${CONFIG.GUIDE_URL}#proj-${lessonN}">Открыть урок</a>
+      </div>
+    </div>`);
+    today.querySelector('#lsel').onchange = e => {
+      today.querySelector('#lopen').setAttribute('href', CONFIG.GUIDE_URL + '#proj-' + e.target.value);
+    };
+    el.appendChild(today);
+  }
+
+  /* --- кто застрял --- */
+  // Список идёт сразу под «Уроком сегодня»: на занятии преподаватель смотрит
+  // именно сюда, а общие числа по группе — это отчётность, им место ниже.
+  // Счётчик застрявших стоит прямо в заголовке, чтобы не дублировать его плашкой.
+  el.appendChild($(`<div class="section-head"><h2>Кому нужна помощь${stuckList.length?` <span class="cnt">${stuckList.length}</span>`:''}</h2></div>`));
+  const sc = $(`<div class="card"></div>`);
+  if (!stuckList.length) sc.appendChild($(`<div class="empty ok">
+    <div class="ico">✓</div>
+    <div class="t">Сейчас никто не застрял</div>
+    <div class="s">Вся группа идёт без затыков. Если кто-то упрётся — он нажмёт «Не получается» у себя, и запись появится здесь.</div>
+  </div>`));
+  stuckList.forEach(({s,p,note,at}) => {
+    const when = fmtWhen(at);
+    const it = $(`<div class="stuck-item">
+      <div class="badge">${String(p.n).padStart(2,'0')}</div>
+      <div class="grow">
+        <div class="nm-row"><span class="nm">${esc(s.name)}</span><span class="proj">${esc(p.t)}</span>${when ? `<span class="when">${when}</span>` : ''}</div>
+        ${note ? `<div class="qt">«${esc(note)}»</div>` : `<div class="qt muted">Без описания</div>`}
+      </div>
+      <div class="acts"></div>
+    </div>`);
+    const box = it.lastElementChild;
+    // Ученик застрял на конкретном проекте — преподавателю нужен именно он,
+    // а не начало инструкции: листать оглавление при ученике неудобно.
+    // Помощь одному ученику — это работа с началом и концом, поэтому урок
+    // открывается в этой же вкладке, а не в новой: возврат «К группе» тогда
+    // ведёт назад, а не создаёт вторую копию кабинета рядом.
+    // В ссылке едут номер ученика и номер проекта — страница урока покажет
+    // внизу, кому преподаватель помогает, даст отметить результат и сразу
+    // предложит следующего застрявшего.
+    const bg = $(`<a class="btn ghost sm" href="${CONFIG.GUIDE_URL}?help=${s.id}&proj=${p.n}#proj-${p.n}">Урок</a>`);
+    // «Проект работает» ставит проект в собранные, «Помог, доделает» только снимает
+    // отметку «застрял». Названия должны говорить, что произойдёт: преподаватель
+    // выбирает между ними на ходу, стоя у стола ученика.
+    const b1 = $(`<button class="btn sm">Проект работает</button>`);
+    b1.onclick = async () => {
+      try { await Store.setProgress(s.id, p.n, 'done', ''); }
+      catch(err){ toast(err.message); return; }
+      toast(s.name + ' — проект ' + String(p.n).padStart(2,'0') + ' отмечен собранным');
+      render();
+    };
+    const b2 = $(`<button class="btn ghost sm">Помог, доделает</button>`);
+    b2.onclick = async () => {
+      try { await Store.setProgress(s.id, p.n, 'doing', ''); }
+      catch(err){ toast(err.message); return; }
+      toast(s.name + ' — отметка «застрял» снята, доделывает');
+      render();
+    };
+    box.append(bg, b1, b2);
+    sc.appendChild(it);
+  });
+  el.appendChild(sc);
+
+  el.appendChild($(`<div class="stat-row stat-row-after">
+    <div class="stat"><div class="l">Учеников</div><div class="v">${list.length}</div></div>
+    <div class="stat"><div class="l">Средний прогресс</div><div class="v">${avg.toFixed(1)}<small> / ${NPROJ}</small></div></div>
+    <div class="stat"><div class="l">Проектов закрыто</div><div class="v">${doneC}<small> / ${totalCells}</small></div></div>
+  </div>`));
+
+  /* --- матрица --- */
+  el.appendChild($(`<div class="section-head"><h2>Вся группа на одном экране</h2></div>`));
+  const wrapx = $(`<div class="scrollx"></div>`);
+  const tbl = $(`<table class="mx">
+    <thead><tr><th style="text-align:left;padding-left:12px">Ученик</th>${PROJECTS.map(p=>`<th title="${esc(p.t)} — открыть урок"><a class="mxh" target="_blank" href="${CONFIG.GUIDE_URL}#proj-${p.n}">${String(p.n).padStart(2,'0')}</a></th>`).join('')}<th>Итого</th></tr></thead>
+    <tbody></tbody></table>`);
+  const tb = tbl.querySelector('tbody');
+  list.forEach(s => {
+    const tr = $(`<tr><th>${esc(s.name)}</th></tr>`);
+    PROJECTS.forEach(p => {
+      const pr = Store.prog(s.id, p.n);
+      const cs = Store.state(s.id, p.n);
+      const td = $(`<td class="cell"><i class="s-${cs}" title="${esc(s.name)} · Проект ${p.n} · ${STATUS[cs].label}${pr.note?' — '+esc(pr.note):''}">${STATUS[cs].short}</i></td>`);
+      tr.appendChild(td);
+    });
+    tr.appendChild($(`<td style="text-align:center;font-family:var(--mono);font-size:12px;padding:0 8px">${Store.doneCount(s.id)}</td>`));
+    tb.appendChild(tr);
+  });
+  wrapx.appendChild(tbl);
+  el.appendChild(wrapx);
+  el.appendChild($(`<div class="legend">
+    <span><i style="background:var(--green)"></i> собрано</span>
+    <span><i style="background:#F0D98A"></i> делает сейчас</span>
+    <span><i style="background:var(--signal)"></i> застрял</span>
+    <span><i style="background:var(--paper)"></i> ещё не начинал</span>
+    <span class="muted">наведи курсор на клетку — покажет, что именно не получается</span>
+    <span class="muted">нажми на номер проекта в шапке — откроется урок по нему</span>
+  </div>`));
+
+  const w = document.createElement('div'); w.appendChild(el); return w;
+}
+
+/* ---------------------- КАБИНЕТ АДМИНИСТРАТОРА ---------------------- */
+function viewAdmin(){
+  const el = document.createDocumentFragment();
+  const db = Store.db;
+
+  /* --- вся школа или одна группа ---------------------------------------
+     По умолчанию директор смотрит школу целиком. Но перед разговором с
+     конкретным преподавателем ему нужна одна группа: в общих числах её
+     провал не виден, он растворяется среди остальных. Переключатель меняет
+     всё, что ниже, — числа, графики и списки. «Группы в сравнении» остаются
+     полными: в них весь смысл как раз в том, чтобы видеть остальных рядом. */
+  const scope = (S.adminGroup && db.groups.some(g => g.code === S.adminGroup)) ? S.adminGroup : null;
+  const gObj  = scope ? Store.group(scope) : null;
+  const gTea  = gObj ? Store.teacher(gObj.teacherId) : null;
+  const stu   = scope ? Store.studentsOf(scope) : db.students;
+  const ids   = scope ? new Set(stu.map(s => s.id)) : null;
+
+  /* Переключатель групп — одна и та же деталь в двух местах страницы: здесь,
+     рядом с числами, и внизу у таблицы. Внизу он нужен потому, что таблица —
+     самый конец длинной страницы, и возвращаться наверх ради смены группы
+     это лишний путь. Состояние одно (S.adminGroup), поэтому оба показывают
+     одно и то же и меняют всё, что ниже.
+
+     До шести групп — ряд кнопок: варианты видны сразу, переключение в один
+     клик, и заодно видно, сколько всего групп в школе. Дальше кнопки
+     перестают помещаться в строку, и честнее выпадающий список — он не
+     растёт вместе со школой. */
+  const groupSwitch = () => {
+    const box = $(`<div class="gsw"></div>`);
+    if (db.groups.length > 6){
+      const sel = $(`<select>
+        <option value="">Вся школа</option>
+        ${db.groups.map(g => `<option value="${esc(g.code)}"${g.code===scope?' selected':''}>${esc(g.name)}</option>`).join('')}
+      </select>`);
+      sel.onchange = e => { S.adminGroup = e.target.value || null; save(); render(); };
+      box.appendChild(sel);
+      return box;
+    }
+    const mk = (label, code, full) => {
+      const b = $(`<button type="button" class="${code === scope ? 'on' : ''}" title="${esc(full)}">${esc(label)}</button>`);
+      b.onclick = () => { S.adminGroup = code; save(); render(); };
+      return b;
+    };
+    box.appendChild(mk('Вся школа', null, 'Все группы школы'));
+    db.groups.forEach(g => box.appendChild(mk(shortGroup(g), g.code, g.name)));
+    return box;
+  };
+
+  const head = $(`<div class="section-head has-sw"><h2>${scope ? 'Группа' : 'Вся школа'}</h2>${
+    gObj ? `<span class="sub">${esc(gObj.name)}${gTea ? ' · ' + esc(gTea.name) : ''}</span>` : ''}</div>`);
+  if (db.groups.length) head.appendChild(groupSwitch());
+  el.appendChild(head);
+
+  const totalDone = stu.reduce((a,s) => a + Store.doneCount(s.id), 0);
+  const kits = stu.filter(s => s.kit).length;
+  let stuckNow = 0;
+  stu.forEach(s => PROJECTS.forEach(p => { if (Store.prog(s.id, p.n).status === 'stuck') stuckNow++; }));
+  el.appendChild($(`<div class="stat-row" style="margin-top:26px">
+    ${scope ? '' : `<div class="stat"><div class="l">Групп</div><div class="v">${db.groups.length}</div></div>`}
+    <div class="stat"><div class="l">Учеников</div><div class="v">${stu.length}</div></div>
+    ${scope ? `<div class="stat"><div class="l">Застряли сейчас</div><div class="v">${stuckNow}</div></div>`
+            : `<div class="stat"><div class="l">Преподавателей</div><div class="v">${db.teachers.length}</div></div>`}
+    <div class="stat"><div class="l">Наборы выданы</div><div class="v">${kits}<small> / ${stu.length}</small></div></div>
+    <div class="stat"><div class="l">Проектов собрано</div><div class="v">${totalDone}</div></div>
+  </div>`));
+
+  /* --- Темп и доходимость ----------------------------------------------
+     «Проектов собрано» — число, которое только растёт и ничего не говорит:
+     оно одинаково хорошо выглядит и когда школа идёт, и когда встала.
+     Директору нужны два других вопроса: ускоряемся мы или тормозим,
+     и сколько детей вообще доходит до конца курса, а не бросает на третьем. */
+  const weeks = [];
+  for (let i = 5; i >= 0; i--) weeks.push({ i, n: Store.doneBetween(7*(i+1), 7*i, ids) });
+  const wMax   = Math.max(1, ...weeks.map(w => w.n));
+  const thisW  = weeks[5].n, prevW = weeks[4].n;
+  const delta  = thisW - prevW;
+  const dTxt   = delta > 0 ? `на ${delta} ${plural(delta,'проект','проекта','проектов')} больше, чем неделей раньше`
+               : delta < 0 ? `на ${-delta} ${plural(-delta,'проект','проекта','проектов')} меньше, чем неделей раньше`
+               : 'столько же, сколько неделей раньше';
+
+  const half     = Math.ceil(NPROJ / 2);
+  const started  = stu.filter(s => Store.doneCount(s.id) >= 1).length;
+  const midway   = stu.filter(s => Store.doneCount(s.id) >= half).length;
+  const finished = stu.filter(s => Store.doneCount(s.id) >= NPROJ).length;
+  const NS = stu.length;
+  const pctOf = (v) => NS ? Math.round(v / NS * 100) : 0;
+
+  el.appendChild($(`<div class="section-head"><h2>Темп и доходимость</h2><span class="sub">За последние шесть недель</span></div>`));
+  const twoTop = $(`<div class="two"></div>`);
+
+  twoTop.appendChild($(`<div class="card">
+    <div class="stat" style="margin:0 0 6px"><div class="l">Собрано за 7 дней</div><div class="v">${thisW}</div></div>
+    <p class="muted" style="font-size:13.5px;margin:0;line-height:1.5">${dTxt}</p>
+    <div class="spark">${weeks.map(w => `<div class="col${w.i===0?' now':''}" title="${w.n} ${plural(w.n,'проект','проекта','проектов')}"><i style="height:${Math.round(w.n / wMax * 100)}%"></i></div>`).join('')}</div>
+    <div class="spark-x">${weeks.map(w => `<span>${w.i===0?'эта':'−'+w.i}</span>`).join('')}</div>
+    <p class="muted" style="font-size:13.5px;margin:14px 0 0;line-height:1.5">Каждый столбик — одна неделя, слева самая давняя, справа текущая. Высота — сколько проектов ${scope ? 'группа' : 'вся школа'} закрыла за ту неделю. Ровный ряд значит стабильный ход, проседание справа — что-то мешает прямо сейчас.</p>
+  </div>`));
+
+  const funnel = [
+    {t:'Начали',            s:'собрали хотя бы один проект',        v:started},
+    {t:'Дошли до середины', s:`собрали ${half} и больше из ${NPROJ}`, v:midway},
+    {t:'Прошли весь курс',  s:`все ${NPROJ} проектов`,               v:finished}
+  ];
+  twoTop.appendChild($(`<div class="card">
+    <div class="funnel">${funnel.map(f => `
+      <div class="fr">
+        <div class="fh"><span class="ft">${f.t}</span><span class="fv">${f.v}<small> из ${NS}</small></span></div>
+        <div class="bar"><i style="width:${pctOf(f.v)}%"></i></div>
+        <div class="fs">${f.s}</div>
+      </div>`).join('')}</div>
+    <p class="muted" style="font-size:13.5px;margin:16px 0 0;line-height:1.5">Три ступени одной воронки: сколько детей вообще стартовало, сколько добралось до середины и сколько дошло до конца. Обрыв между первой и второй строкой — это те, кто бросил в начале; между второй и третьей — те, кто устал на финише.</p>
+  </div>`));
+  el.appendChild(twoTop);
+
+  /* --- Кто застревает надолго и кто пропал -----------------------------
+     Обычный «застрял» преподаватель разбирает на ближайшем занятии.
+     Директору нужны те двое, кого система пропустила: ребёнок, который
+     держит один и тот же затык больше недели, и ребёнок, который просто
+     перестал что-либо отмечать — в общей статистике он не виден никак. */
+  const stuckLong = [];
+  stu.forEach(s => PROJECTS.forEach(pr => {
+    const r = Store.prog(s.id, pr.n);
+    if (r.status !== 'stuck') return;
+    const d = Store.daysSince(r.updated);
+    if (d === null || d < 7) return;
+    stuckLong.push({s, p:pr, d, note:r.note, g:Store.group(s.groupCode)});
+  }));
+  stuckLong.sort((a,b) => b.d - a.d);
+
+  const idle = []; let never = 0;
+  stu.forEach(s => {
+    const lt = Store.lastTouch(s.id);
+    if (!lt){ never++; return; }
+    const d = Store.daysSince(lt);
+    if (d !== null && d >= 14) idle.push({s, d, g:Store.group(s.groupCode), done:Store.doneCount(s.id)});
+  });
+  idle.sort((a,b) => b.d - a.d);
+
+  el.appendChild($(`<div class="section-head"><h2>Требуют внимания</h2><span class="sub">${stuckLong.length + idle.length ? stuckLong.length + idle.length + ' ' + plural(stuckLong.length + idle.length,'запись','записи','записей') : 'чисто'}</span></div>`));
+  const twoAtt = $(`<div class="two"></div>`);
+
+  const cStuck = $(`<div class="card"><h3 class="cardh">Застряли дольше недели</h3></div>`);
+  if (!stuckLong.length) cStuck.appendChild($(`<div class="empty ok">
+    <div class="ico">✓</div>
+    <div class="t">Таких нет</div>
+    <div class="s">Все затыки разбираются в течение недели. Сюда попадает ученик, который нажал «Не получается» и с тех пор так и не сдвинулся.</div>
+  </div>`));
+  else {
+    const t1 = $(`<table class="list"><thead><tr><th>Ученик</th><th>Группа</th><th>Проект</th><th>Ждёт</th></tr></thead><tbody></tbody></table>`);
+    const b1 = t1.querySelector('tbody');
+    stuckLong.forEach(r => b1.appendChild($(`<tr>
+      <td><b>${esc(r.s.name)}</b>${r.note ? `<div class="qn muted" style="font-size:13.5px;margin-top:3px;line-height:1.45;max-width:34ch">«${esc(r.note)}»</div>` : ''}</td>
+      <td style="white-space:nowrap">${esc(gShort(r.g))}</td>
+      <td>${String(r.p.n).padStart(2,'0')}<span class="pt"> · ${esc(r.p.t)}</span></td>
+      <td style="white-space:nowrap"><span class="chip stuck">${r.d} ${plural(r.d,'день','дня','дней')}</span></td>
+    </tr>`)));
+    const s1 = $(`<div class="tscroll"></div>`); s1.appendChild(t1); cStuck.appendChild(s1);
+    cStuck.appendChild($(`<p class="muted" style="font-size:13.5px;margin:14px 0 0;line-height:1.5">Ребёнок сам написал, что не получается, и с того дня ничего не изменилось. Больше недели на одном месте — это уже не «не разобрался», а «его не дождались»: стоит спросить преподавателя, что там произошло.</p>`));
+  }
+  twoAtt.appendChild(cStuck);
+
+  const cIdle = $(`<div class="card"><h3 class="cardh">Не двигаются две недели</h3></div>`);
+  if (!idle.length) cIdle.appendChild($(`<div class="empty ok">
+    <div class="ico">✓</div>
+    <div class="t">Все на связи</div>
+    <div class="s">У каждого ученика есть отметка за последние две недели. Сюда попадёт тот, кто перестал отмечать проекты — обычно это значит, что он перестал ходить.</div>
+  </div>`));
+  else {
+    const t2 = $(`<table class="list"><thead><tr><th>Ученик</th><th>Группа</th><th>Собрано</th><th>Тишина</th></tr></thead><tbody></tbody></table>`);
+    const b2 = t2.querySelector('tbody');
+    idle.forEach(r => b2.appendChild($(`<tr>
+      <td><b>${esc(r.s.name)}</b></td>
+      <td style="white-space:nowrap">${esc(gShort(r.g))}</td>
+      <td>${r.done} / ${NPROJ}</td>
+      <td style="white-space:nowrap"><span class="chip stuck">${r.d} ${plural(r.d,'день','дня','дней')}</span></td>
+    </tr>`)));
+    const s2 = $(`<div class="tscroll"></div>`); s2.appendChild(t2); cIdle.appendChild(s2);
+    cIdle.appendChild($(`<p class="muted" style="font-size:13.5px;margin:14px 0 0;line-height:1.5">Последняя отметка старше двух недель. Такой ученик не застрял — он молча выпал, и ни одна другая цифра на этой странице этого не покажет: его прогресс просто перестал меняться.${never ? ` Ещё ${never} ${plural(never,'ученик','ученика','учеников')} не ${plural(never,'отметил','отметили','отметили')} ни одного проекта — они пока нигде не считаются.` : ''}</p>`));
+  }
+  twoAtt.appendChild(cIdle);
+  el.appendChild(twoAtt);
+
+  /* --- Группы в сравнении ---------------------------------------------
+     Преподаватель видит только свою группу, и сравнить её ему не с чем.
+     Директору нужно видеть все рядом: одинаковый курс, разный темп —
+     это уже повод для разговора с преподавателем, а не с детьми. */
+  el.appendChild($(`<div class="section-head"><h2>Группы в сравнении</h2><span class="sub">Один курс · разный темп</span></div>`));
+  const cmp = $(`<div class="card"></div>`);
+  if (!db.groups.length) cmp.appendChild($(`<div class="empty">Групп пока нет</div>`));
+  else {
+    const rows = db.groups.map(g => {
+      const list = Store.studentsOf(g.code);
+      let stuck = 0;
+      list.forEach(s => PROJECTS.forEach(p => { if (Store.prog(s.id, p.n).status === 'stuck') stuck++; }));
+      const avg  = list.length ? list.reduce((a,s) => a + Store.doneCount(s.id), 0) / list.length : 0;
+      const kits = list.filter(s => s.kit).length;
+      return {g, list, stuck, avg, kits, t: Store.teacher(g.teacherId)};
+    }).sort((a,b) => b.avg - a.avg);
+
+    const tbl = $(`<table class="list"><thead><tr>
+      <th>Группа</th><th>Преподаватель</th><th>Учеников</th>
+      <th>Средний прогресс</th><th>Застряли</th><th>Наборы</th>
+    </tr></thead><tbody></tbody></table>`);
+    const tb = tbl.querySelector('tbody');
+    rows.forEach((r, i) => {
+      const pct = Math.round(r.avg / NPROJ * 100);
+      const last = (i === rows.length - 1 && rows.length > 1);
+      // Строка выбранной группы подсвечена: сравнение имеет смысл только
+      // рядом с остальными, поэтому список не режем, а помечаем место.
+      tb.appendChild($(`<tr${r.g.code===scope?' style="background:var(--paper-3)"':''}>
+        <td><b>${esc(r.g.name)}</b><div class="muted" style="font-family:var(--mono);font-size:12px;margin-top:2px">${esc(r.g.code)}</div></td>
+        <td>${esc(r.t ? r.t.name : '—')}</td>
+        <td>${r.list.length}</td>
+        <td style="min-width:220px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:13.5px;white-space:nowrap;font-variant-numeric:tabular-nums">${r.avg.toFixed(1)} / ${NPROJ}</span>
+            <div class="bar" style="flex:1"><i style="width:${pct}%"></i></div>
+          </div>
+        </td>
+        <td>${r.stuck ? `<span class="chip stuck">${r.stuck}</span>` : `<span class="muted">—</span>`}</td>
+        <td>${r.kits} / ${r.list.length}${last ? '' : ''}</td>
+      </tr>`));
+    });
+    cmp.appendChild(tbl);
+    cmp.appendChild($(`<p class="muted" style="font-size:13.5px;margin:14px 0 0;line-height:1.5">Группы отсортированы по среднему прогрессу — сверху те, кто идёт быстрее. Нижняя строка отстаёт: курс у всех одинаковый, значит разница в темпе это вопрос к организации занятий, а не к детям.</p>`));
+  }
+  el.appendChild(cmp);
+
+  /* --- Вся школа по проектам ------------------------------------------
+     У преподавателя такая таблица есть по его группе. Директору нужна та же
+     картина, но по всем группам сразу: где кто стоит, кто застрял, и как
+     группы выглядят рядом друг с другом на одних и тех же столбцах. */
+  /* Переключатель групп стоит прямо у таблицы: она в самом низу страницы,
+     и возвращаться к селектору наверху ради смены группы — лишний путь.
+     Состояние то же самое (S.adminGroup), поэтому числа и графики выше
+     меняются вместе с таблицей. Двух разных «выбранных групп» на одном
+     экране быть не должно — директор перестал бы понимать, к чему относится
+     цифра, на которую он смотрит. */
+  /* «Прогресс каждого». Слово «прогресс» на платформе уже работает: столбец
+     «Средний прогресс» в «Группах в сравнении» и в кабинете преподавателя,
+     столбец «Прогресс» в списке учеников. Таблица ниже — про ровно то же
+     самое, поэтому она называется тем же словом: одно понятие — одно слово,
+     директору не нужно учить второе.
+
+     «Каждого» — чтобы пара с соседним блоком читалась сама: выше «Группы в
+     сравнении» со средним по группе, ниже — тот же прогресс, но поимённо.
+     Заголовок не меняется при смене группы: что выбрано, видно по кнопкам. */
+  const headA = $(`<div class="section-head has-sw"><h2>Прогресс каждого</h2></div>`);
+  if (db.groups.length) headA.appendChild(groupSwitch());
+  el.appendChild(headA);
+  const wrapA = $(`<div class="scrollx"></div>`);
+  const tblA = $(`<table class="mx">
+    <thead><tr><th style="text-align:left;padding-left:12px">Ученик</th>${PROJECTS.map(p=>`<th title="${esc(p.t)} — открыть урок"><a class="mxh" target="_blank" href="${CONFIG.GUIDE_URL}#proj-${p.n}">${String(p.n).padStart(2,'0')}</a></th>`).join('')}<th>Итого</th></tr></thead>
+    <tbody></tbody></table>`);
+  const tbA = tblA.querySelector('tbody');
+
+  const groupsA = scope ? db.groups.filter(g => g.code === scope) : db.groups;
+  if (!groupsA.length){
+    tbA.appendChild($(`<tr><td colspan="${NPROJ+2}" class="empty">Групп пока нет</td></tr>`));
+  } else groupsA.forEach(g => {
+    const list = Store.studentsOf(g.code);
+    const t = Store.teacher(g.teacherId);
+    let stuckG = 0;
+    list.forEach(s => PROJECTS.forEach(p => { if (Store.prog(s.id,p.n).status==='stuck') stuckG++; }));
+    const avgG = list.length ? (list.reduce((a,s)=>a+Store.doneCount(s.id),0)/list.length) : 0;
+
+    tbA.appendChild($(`<tr class="mx-grp"><th colspan="${NPROJ+2}">
+      ${esc(g.name)} <span class="s">${esc(t?t.name:'без преподавателя')} · ${list.length} чел. · в среднем ${avgG.toFixed(1)} из ${NPROJ}${stuckG?' · застряли '+stuckG:''}</span>
+    </th></tr>`));
+
+    if (!list.length){
+      tbA.appendChild($(`<tr><td colspan="${NPROJ+2}" class="muted" style="padding:10px 15px">В группе пока нет учеников</td></tr>`));
+      return;
+    }
+    list.forEach(s => {
+      const tr = $(`<tr><th>${esc(s.name)}</th></tr>`);
+      PROJECTS.forEach(p => {
+        const pr = Store.prog(s.id, p.n);
+        const cs = Store.state(s.id, p.n);
+        tr.appendChild($(`<td class="cell"><i class="s-${cs}" title="${esc(s.name)} · Проект ${p.n} · ${STATUS[cs].label}${pr.note?' — '+esc(pr.note):''}">${STATUS[cs].short}</i></td>`));
+      });
+      tr.appendChild($(`<td style="text-align:center;font-family:var(--mono);font-size:12px;padding:0 8px">${Store.doneCount(s.id)}</td>`));
+      tbA.appendChild(tr);
+    });
+  });
+  wrapA.appendChild(tblA);
+  el.appendChild(wrapA);
+  el.appendChild($(`<div class="legend">
+    <span><i style="background:var(--green)"></i> собрано</span>
+    <span><i style="background:#F0D98A"></i> делает сейчас</span>
+    <span><i style="background:var(--signal)"></i> застрял</span>
+    <span><i style="background:var(--paper)"></i> ещё не начинал</span>
+    <span class="muted">наведи курсор на клетку — покажет, что именно не получается</span>
+  </div>`));
+
+  const tabs = $(`<div class="tabs" style="margin-top:30px">
+    <button data-t="groups"   class="${S.tab==='groups'?'on':''}">Группы</button>
+    <button data-t="students" class="${S.tab==='students'?'on':''}">Ученики и наборы</button>
+    <button data-t="teachers" class="${S.tab==='teachers'?'on':''}">Преподаватели</button>
+  </div>`);
+  tabs.querySelectorAll('button').forEach(b => b.onclick = () => { S.tab=b.dataset.t; render(); });
+  el.appendChild(tabs);
+
+  if (S.tab === 'groups')   el.appendChild(adminGroups());
+  if (S.tab === 'students') el.appendChild(adminStudents());
+  if (S.tab === 'teachers') el.appendChild(adminTeachers());
+
+  const w = document.createElement('div'); w.appendChild(el); return w;
+}
+
+function adminGroups(){
+  const box = $(`<div class="two"></div>`);
+  const left = $(`<div class="card"><table class="list"><thead><tr><th>Название</th><th>Код</th><th>Преподаватель</th><th>Учеников</th><th></th></tr></thead><tbody></tbody></table></div>`);
+  const tb = left.querySelector('tbody');
+  if (!Store.db.groups.length) tb.appendChild($(`<tr><td colspan="5" class="empty">Групп пока нет</td></tr>`));
+  Store.db.groups.forEach(g => {
+    const t = Store.teacher(g.teacherId);
+    const tr = $(`<tr>
+      <td>${esc(g.name)}</td>
+      <td><code style="font-family:var(--mono);background:var(--paper-3);padding:2px 6px;border-radius:2px">${esc(g.code)}</code></td>
+      <td>${esc(t?t.name:'—')}</td>
+      <td>${Store.studentsOf(g.code).length}</td>
+      <td style="text-align:right"></td></tr>`);
+    const del = $(`<button class="btn ghost tiny">Удалить</button>`);
+    del.onclick = async () => {
+      if(!confirmish('Удалить группу «'+g.name+'» вместе с её учениками?')) return;
+      try { await Store.delGroup(g.code); render(); } catch(e){ toast(e.message); }
+    };
+    tr.lastElementChild.appendChild(del);
+    tb.appendChild(tr);
+  });
+
+  // В сетевом режиме код группы придумывает сервер — случайный, чтобы его
+  // нельзя было перебрать по шаблону «ROBO-5A, ROBO-5B…». В демо — руками.
+  const right = $(`<div class="card">
+    <h3 style="font-family:var(--serif);font-size:22px;margin-bottom:12px">Новая группа</h3>
+    <div class="field"><label>Название (что видит преподаватель)</label><input id="gn" placeholder="Робототехника · 6А · вт/чт 15:00"></div>
+    ${Store.live ? '' : '<div class="field"><label>Код для учеников</label><input id="gcd" placeholder="ROBO-6A"></div>'}
+    <div class="field"><label>Преподаватель</label><select id="gt">${Store.db.teachers.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('')}</select></div>
+    <div class="err" id="ge"></div>
+    <button class="btn primary" id="gadd">Создать группу</button>
+  </div>`);
+  right.querySelector('#gadd').onclick = async () => {
+    const name = right.querySelector('#gn').value.trim();
+    const code = Store.live ? '' : right.querySelector('#gcd').value.trim().toUpperCase();
+    const teacherId = right.querySelector('#gt').value;
+    const e = right.querySelector('#ge');
+    if (!name || (!Store.live && !code)){ e.textContent = Store.live ? 'Напиши название группы.' : 'Заполни название и код.'; return; }
+    if (code && Store.group(code)){ e.textContent='Группа с таким кодом уже есть.'; return; }
+    if (!teacherId){ e.textContent='Сначала добавь хотя бы одного преподавателя.'; return; }
+    try {
+      const g = await Store.addGroup({code, name, teacherId});
+      render();
+      if (Store.live) toast('Группа создана. Код для учеников: ' + g.code);
+    } catch(err){ e.textContent = err.message; }
+  };
+  box.append(left, right); return box;
+}
+
+function adminStudents(){
+  const box = $(`<div class="two"></div>`);
+  const left = $(`<div class="card"><table class="list"><thead><tr><th>Ученик</th><th>Группа</th><th>Прогресс</th><th>Набор</th><th></th></tr></thead><tbody></tbody></table></div>`);
+  const tb = left.querySelector('tbody');
+  if (!Store.db.students.length) tb.appendChild($(`<tr><td colspan="5" class="empty">Учеников пока нет</td></tr>`));
+  Store.db.students.forEach(s => {
+    const tr = $(`<tr><td>${esc(s.name)}</td><td><code style="font-family:var(--mono);font-size:12px">${esc(s.groupCode)}</code></td>
+      <td>${Store.doneCount(s.id)} / ${NPROJ}</td><td></td><td style="text-align:right"></td></tr>`);
+    const kb = $(`<button class="btn ${s.kit?'':'ghost'} tiny">${s.kit?'выдан':'нет'}</button>`);
+    kb.onclick = async () => { try { await Store.setKit(s.id, !s.kit); render(); } catch(e){ toast(e.message); } };
+    tr.children[3].appendChild(kb);
+    const del = $(`<button class="btn ghost tiny">Удалить</button>`);
+    del.onclick = async () => {
+      if(!confirmish('Удалить ученика «'+s.name+'»?')) return;
+      try { await Store.delStudent(s.id); render(); } catch(e){ toast(e.message); }
+    };
+    tr.lastElementChild.appendChild(del);
+    tb.appendChild(tr);
+  });
+
+  const right = $(`<div class="card">
+    <h3 style="font-family:var(--serif);font-size:22px;margin-bottom:6px">Добавить учеников</h3>
+    <p class="muted" style="font-size:13.5px">Вставь список из журнала — по одному имени в строке. Заведутся все сразу.</p>
+    <div class="field"><label>Группа</label><select id="sg">${Store.db.groups.map(g=>`<option value="${esc(g.code)}">${esc(g.name)}</option>`).join('')}</select></div>
+    <div class="field"><label>Имена</label><textarea id="sn" rows="7" placeholder="Азамат Жумабеков&#10;Алина Ким&#10;Бекзат Турсунов"></textarea></div>
+    <div class="err" id="se"></div>
+    <button class="btn primary" id="sadd">Добавить</button>
+  </div>`);
+  right.querySelector('#sadd').onclick = async () => {
+    const code = right.querySelector('#sg').value;
+    const names = right.querySelector('#sn').value.split('\n').map(x=>x.trim()).filter(Boolean);
+    const e = right.querySelector('#se');
+    if (!code){ e.textContent='Сначала создай группу.'; return; }
+    if (!names.length){ e.textContent='Список пустой.'; return; }
+    try { await Store.addStudents(code, names); render(); } catch(err){ e.textContent = err.message; }
+  };
+  box.append(left, right); return box;
+}
+
+function adminTeachers(){
+  const box = $(`<div class="two"></div>`);
+  const left = $(`<div class="card"><table class="list"><thead><tr><th>Преподаватель</th><th>Код входа</th><th>Групп</th><th></th></tr></thead><tbody></tbody></table></div>`);
+  const tb = left.querySelector('tbody');
+  if (!Store.db.teachers.length) tb.appendChild($(`<tr><td colspan="4" class="empty">Преподавателей пока нет</td></tr>`));
+  Store.db.teachers.forEach(t => {
+    const tr = $(`<tr><td>${esc(t.name)}</td>
+      <td><code style="font-family:var(--mono);background:var(--paper-3);padding:2px 6px;border-radius:2px">${esc(t.pin || '••••')}</code></td>
+      <td>${Store.groupsOf(t.id).length}</td><td style="text-align:right"></td></tr>`);
+    const del = $(`<button class="btn ghost tiny">Удалить</button>`);
+    del.onclick = async () => {
+      if(!confirmish('Удалить преподавателя «'+t.name+'»?')) return;
+      try { await Store.delTeacher(t.id); render(); } catch(e){ toast(e.message); }
+    };
+    tr.lastElementChild.appendChild(del);
+    tb.appendChild(tr);
+  });
+
+  const right = $(`<div class="card">
+    <h3 style="font-family:var(--serif);font-size:22px;margin-bottom:12px">Новый преподаватель</h3>
+    <div class="field"><label>Имя</label><input id="tn" placeholder="Айгуль Осмоналиева"></div>
+    <div class="field"><label>Код входа (4 цифры)</label><input id="tp" inputmode="numeric" placeholder="3333"></div>
+    <div class="err" id="te"></div>
+    <button class="btn primary" id="tadd">Добавить</button>
+  </div>`);
+  right.querySelector('#tadd').onclick = async () => {
+    const name = right.querySelector('#tn').value.trim();
+    const pin = right.querySelector('#tp').value.trim();
+    const e = right.querySelector('#te');
+    if (!name || !pin){ e.textContent='Заполни имя и код.'; return; }
+    if (!/^\d{4,}$/.test(pin)){ e.textContent='Код — только цифры, не меньше четырёх.'; return; }
+    if (!Store.live && (Store.db.teachers.some(t=>t.pin===pin) || pin===Store.db.school.adminPin)){ e.textContent='Такой код уже занят — придумай другой.'; return; }
+    try { await Store.addTeacher({id:'t'+Math.random().toString(36).slice(2,8), name, pin}); render(); }
+    catch(err){ e.textContent = err.message; }
+  };
+  box.append(left, right); return box;
+}
+
+/* маленькое подтверждение вместо confirm() */
+function confirmish(msg){ return window.confirm(msg); }
+
+/* =====================================================================
+   ШАПКА РАСТВОРЯЕТСЯ ПРИ ПРОКРУТКЕ
+   Та же механика, что в уроке (шаблон-курса.html): едем вниз — шапка
+   уходит, и возвращается только у самого верха. От движения вверх
+   посреди страницы она НЕ всплывает — иначе выворачивалась бы на
+   содержимое от любого касания колеса. Класс вешается на body, вид —
+   в theme.css по `body.hdr-away .topbar`. В кабинетах прячется всё:
+   рельсы и кнопки возврата тут нет, а «Выйти» посреди страницы не нужна.
+   ===================================================================== */
+(function(){
+  var last = 0;
+  var GUARD = 140;   /* до этой прокрутки шапка всегда на месте */
+  var JITTER = 5;    /* меньше этого — дрожание тачпада, не движение */
+  function onScroll(){
+    var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+    if (y < GUARD){
+      document.body.classList.remove('hdr-away');
+    } else if (y > last + JITTER){
+      document.body.classList.add('hdr-away');
+    }
+    last = y;
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', onScroll);
+})();
+
+/* =====================================================================
+   СТАРТ
+   ===================================================================== */
+(async function(){
+  document.getElementById('app').innerHTML = '<div class="login"><p class="muted">Загружаю…</p></div>';
+  try { await Store.load(); }
+  catch(e){
+    document.getElementById('app').innerHTML =
+      '<div class="login"><div class="panel"><h1 style="font-size:26px">Не получилось связаться с сервером</h1>' +
+      '<p class="lede">' + esc(e.message) + '</p>' +
+      '<p class="muted" style="font-size:13.5px">Проверь интернет и адрес в CONFIG.API_URL (см. НАСТРОЙКА.md).</p></div></div>';
+    return;
+  }
+  // index.html?reset — вернуть демо-данные в исходный вид перед показом.
+  // Раньше это была кнопка на серой плашке; плашку убрали, ход остался.
+  if (!Store.live && /[?&]reset/.test(location.search)){
+    try{ localStorage.removeItem('robo_school_db_v4'); localStorage.removeItem('robo_session'); }catch(e){}
+    location.replace(location.pathname);
+    return;
+  }
+  if (restore() && Store.live){
+    // Человек уже входил на этом устройстве — забираем свежие списки. Если вход
+    // устарел (или ученика/преподавателя убрали из списка) — на экран входа.
+    try {
+      await Store.refresh(S.role, S.groupCode);
+      if (S.role === 'student' && !Store.db.students.some(s => s.id === S.studentId)) throw new Error('нет');
+      if (S.role === 'teacher' && !Store.db.teachers.some(t => t.id === S.teacherId)) throw new Error('нет');
+    } catch(e){ logout(); return; }
+  }
+  render();
+})();
+</script>
+<script>
+/* Защита от копирования — как в инструкции. Поля ввода не трогаем:
+   преподавателю нужно копировать код группы, ученику — вводить его. */
+document.addEventListener('copy', function(e) {
+  var t = e.target;
+  if (t && t.closest && t.closest('input, textarea, [contenteditable="true"]')) return;
+  e.preventDefault();
+}, false);
+document.addEventListener('contextmenu', function(e) {
+  var t = e.target;
+  if (t && t.closest && t.closest('input, textarea, [contenteditable="true"]')) return;
+  e.preventDefault(); return false;
+}, false);
+</script>
+</body>
+</html>
