@@ -269,7 +269,7 @@ const Store = {
 
   // Токен преподавателя/директора в сетевом режиме. Сервер отдаёт его при
   // входе по коду и потом проверяет на каждом изменении. У учеников токена
-  // нет — их граница доверия по-прежнему код группы.
+  // нет — их граница доверия личный код (номер лицевого счёта).
   token: null,
 
   async load(){
@@ -285,6 +285,8 @@ const Store = {
     let raw = null;
     try { raw = localStorage.getItem('robo_school_db_v4'); } catch(e){}
     try { this.db = raw ? JSON.parse(raw) : seedDemo(); } catch(e){ this.db = seedDemo(); }
+    // Демо, сохранённое до 20.09.2026, не знает личных кодов — пересобираем.
+    if (!this.db.students || !this.db.students.every(s => s.code)) this.db = seedDemo();
     this.persist();
     return this.db;
   },
@@ -293,12 +295,15 @@ const Store = {
   persist(){ try{ localStorage.setItem('robo_school_db_v4', JSON.stringify(this.db)); }catch(e){} },
 
   // --- вход (только сетевой режим; в демо коды проверяются на месте) ---
-  async loginGroup(code){
-    const d = await this.api('login_group', {code});
+  // Ученик входит своим кодом. Сервер отдаёт его самого и его группу —
+  // одноклассников тоже, потому что они видны в кабинете, но без их кодов.
+  async loginStudent(code){
+    const d = await this.api('login_student', {code});
     this.db.groups = [{code:d.group.code, name:d.group.name}];
     this.db.students = d.students.map(s => Object.assign({groupCode:d.group.code}, s));
     this.db.progress = d.progress || {};
     this.persist();
+    return d.studentId;
   },
   async loginTeacher(teacherId, pin){
     const d = await this.api('login_teacher_pin', {teacherId, pin});
@@ -310,10 +315,10 @@ const Store = {
     this.token = d.token;
     this.takeScope(d);
   },
-  // Свежие данные для того, кто уже вошёл: ученик — ещё раз по коду группы,
+  // Свежие данные для того, кто уже вошёл: ученик — ещё раз своим кодом,
   // преподаватель и директор — по токену, без повторного ввода кода.
-  async refresh(role, groupCode){
-    if (role === 'student'){ if (groupCode) await this.loginGroup(groupCode); return; }
+  async refresh(role, studentCode){
+    if (role === 'student'){ if (studentCode) await this.loginStudent(studentCode); return; }
     if (!this.token) throw new Error('Вход устарел — войди заново');
     this.takeScope(await this.api('refresh', {token: this.token}));
   },
@@ -324,8 +329,8 @@ const Store = {
     this.db.progress = d.progress || {};
     this.persist();
   },
-  // Что сервер требует при записи: токен взрослого либо код группы ученика.
-  auth(){ return {token: this.token || '', groupCode: (typeof S !== 'undefined' && S.groupCode) || ''}; },
+  // Что сервер требует при записи: токен взрослого либо личный код ученика.
+  auth(){ return {token: this.token || '', studentCode: (typeof S !== 'undefined' && S.studentCode) || ''}; },
 
   async setProgress(studentId, proj, status, note){
     const key = studentId + ':' + proj;
@@ -373,16 +378,34 @@ const Store = {
     this.db.teachers = this.db.teachers.filter(t => t.id !== id);
     this.persist();
   },
-  async addStudents(groupCode, names){
+  // rows — [{name, code}]: у каждого ученика свой код входа. В демо
+  // проверяем, что код никем не занят, так же строго, как это делает сервер.
+  async addStudents(groupCode, rows){
     let added;
     if (this.live){
-      const d = await this.api('addStudents', {groupCode, names: names.join('|'), token:this.token});
+      const d = await this.api('addStudents', {groupCode, names: rows.map(r=>r.name).join('|'), codes: rows.map(r=>r.code).join('|'), token:this.token});
       added = d.added.map(s => Object.assign({groupCode}, s));
     } else {
-      added = names.map(n => ({id:'s'+Math.random().toString(36).slice(2,9), name:n, groupCode, kit:false}));
+      const seen = {};
+      for (const r of rows){
+        if (seen[r.code]) throw new Error('Код ' + r.code + ' в списке дважды: «' + seen[r.code] + '» и «' + r.name + '».');
+        seen[r.code] = r.name;
+        const dup = this.db.students.find(s => s.code === r.code);
+        if (dup) throw new Error('Код ' + r.code + ' уже есть у ученика «' + dup.name + '».');
+      }
+      added = rows.map(r => ({id:'s'+Math.random().toString(36).slice(2,9), name:r.name, code:r.code, groupCode, kit:false}));
     }
     this.db.students.push(...added); this.persist();
     return added;
+  },
+  async setStudentCode(id, code){
+    if (this.live) await this.api('setStudentCode', {id, code, token:this.token});
+    else {
+      const dup = this.db.students.find(s => s.code === code && s.id !== id);
+      if (dup) throw new Error('Код ' + code + ' уже есть у ученика «' + dup.name + '».');
+    }
+    const s = this.db.students.find(x => x.id === id); if(s) s.code = code;
+    this.persist();
   },
   async delStudent(id){
     if (this.live) await this.api('delStudent', {id, token:this.token});
@@ -459,7 +482,10 @@ function seedDemo(){
   const namesA = ['Азамат Жумабеков','Алина Ким','Бекзат Турсунов','Дана Сатылганова','Ислам Каримов','Камила Асанова','Максат Орозов','Нурсултан Бакиев','Сабина Токтогулова','Тимур Эргешов'];
   const namesB = ['Айдана Мурзаева','Данияр Сооронбаев','Жанель Абдиева','Кирилл Ким','Малика Юсупова','Санжар Кадыров','Элина Бектурова'];
   const namesC = ['Адилет Мамытов','Виктория Ли','Гулназ Асылбекова','Джамиля Осмонова','Руслан Ниязов','Фарида Абдуллаева','Эмир Джолдошев','Ясмина Курманова'];
-  const mk = (names, code) => names.map((n,i) => ({id: code.toLowerCase()+'-'+(i+1), name:n, groupCode:code, kit: true}));
+  // Личные коды входа в демо — 1001, 1002, … подряд по всем группам: на
+  // показе любой код из этого ряда открывает чьего-то ученика.
+  let nextCode = 1001;
+  const mk = (names, code) => names.map((n,i) => ({id: code.toLowerCase()+'-'+(i+1), name:n, code:String(nextCode++), groupCode:code, kit: true}));
   const students = [...mk(namesA,'ROBO-7A'), ...mk(namesB,'ROBO-5B'), ...mk(namesC,'ROBO-9V')];
 
   // Что ученик пишет, когда застрял — своя фраза для каждого проекта.
@@ -552,7 +578,7 @@ function seedDemo(){
 /* =====================================================================
    СОСТОЯНИЕ ЭКРАНА
    ===================================================================== */
-let S = {screen:'login', role:null, teacherId:null, pendingTeacherId:null, studentId:null, groupCode:null, adminGroup:null, tab:'groups', modal:null, err:''};
+let S = {screen:'login', role:null, teacherId:null, pendingTeacherId:null, studentId:null, studentCode:null, groupCode:null, adminGroup:null, tab:'groups', modal:null, err:''};
 
 // <template> нужен, чтобы браузер правильно разбирал строки таблиц (<tr>, <td>)
 const $ = (h) => { const t=document.createElement('template'); t.innerHTML=h.trim(); return t.content.firstElementChild; };
@@ -602,7 +628,7 @@ const plural = (n, one, few, many) => {
 };
 const stars = (n) => '★'.repeat(n) + '☆'.repeat(4-n);
 
-function save(){ try{ localStorage.setItem('robo_session', JSON.stringify({role:S.role, teacherId:S.teacherId, studentId:S.studentId, groupCode:S.groupCode, adminGroup:S.adminGroup, token:Store.token})); }catch(e){} }
+function save(){ try{ localStorage.setItem('robo_session', JSON.stringify({role:S.role, teacherId:S.teacherId, studentId:S.studentId, studentCode:S.studentCode, groupCode:S.groupCode, adminGroup:S.adminGroup, token:Store.token})); }catch(e){} }
 function restore(){
   try{
     const r = JSON.parse(localStorage.getItem('robo_session')||'null');
@@ -629,7 +655,7 @@ async function refreshOnReturn(){
   if (Store.live){
     if (refreshing) return;
     refreshing = true;
-    try { await Store.refresh(S.role, S.groupCode); render(); }
+    try { await Store.refresh(S.role, S.studentCode); render(); }
     catch(e){ /* нет сети — оставляем то, что есть на экране */ }
     finally { refreshing = false; }
     return;
@@ -659,7 +685,7 @@ function logout(){
   Store.token = null;
   // В сетевом режиме слепок класса на этом устройстве больше никому не нужен.
   if (Store.live){ Store.db.groups = []; Store.db.students = []; Store.db.progress = {}; Store.persist(); }
-  S={screen:'login',role:null,teacherId:null,pendingTeacherId:null,studentId:null,groupCode:null,adminGroup:null,tab:'groups',modal:null,err:''}; render();
+  S={screen:'login',role:null,teacherId:null,pendingTeacherId:null,studentId:null,studentCode:null,groupCode:null,adminGroup:null,tab:'groups',modal:null,err:''}; render();
 }
 
 /* =====================================================================
@@ -754,48 +780,40 @@ function viewLogin(){
     return el;
   }
 
-  if (S.role === 'student' && !S.groupCode){
+  // ВХОД УЧЕНИКА — один шаг: свой личный код. В школе это номер лицевого
+  // счёта — он у ребёнка уже есть, ничего нового запоминать не надо.
+  // Раньше был код группы и выбор себя из списка — так любой мог зайти
+  // за соседа; с настоящими детьми это не годится.
+  if (S.role === 'student'){
     const p = $(`<div class="panel">
-      <h1 style="font-size:31px;margin-bottom:6px">Код группы</h1>
-      <p class="lede" style="margin-bottom:22px">Преподаватель выдал вам короткий код — например ${Store.live ? 'K7MPQ4ZX' : 'ROBO-7A'}. Введи его, чтобы найти свой класс.</p>
-      <div class="field"><label>Код группы</label><input id="gc" placeholder="${Store.live ? 'K7MPQ4ZX' : 'ROBO-7A'}" autocomplete="off"></div>
+      <h1 style="font-size:31px;margin-bottom:6px">Твой код</h1>
+      <p class="lede" style="margin-bottom:22px">${Store.live
+        ? 'Это твой номер лицевого счёта в школе — тот же, что для оплаты. Если не помнишь, спроси у преподавателя.'
+        : 'В демо подойдёт любой код от 1001 до 1025 — каждый открывает своего ученика.'}</p>
+      <div class="field"><label>Код</label><input id="gc" placeholder="${Store.live ? '34040' : '1001'}" inputmode="numeric" autocomplete="off"></div>
       <div class="err">${esc(S.err)}</div>
-      <div style="display:flex;gap:9px;margin-top:12px"><button class="btn primary" id="go">Дальше</button><button class="btn ghost" id="bk">Назад</button></div>
+      <div style="display:flex;gap:9px;margin-top:12px"><button class="btn primary" id="go">Войти</button><button class="btn ghost" id="bk">Назад</button></div>
     </div>`);
     const go = async () => {
-      const code = p.querySelector('#gc').value.trim().toUpperCase();
+      const code = p.querySelector('#gc').value.trim();
+      if (!code){ S.err='Введи код.'; render(); return; }
+      const notFound = 'Такого кода нет. Проверь цифры — код знает преподаватель.';
+      let me;
       if (Store.live){
-        try { await Store.loginGroup(code); }
-        catch(e){ S.err = /нет/.test(e.message) ? 'Такой группы нет. Проверь код — его знает преподаватель.' : e.message; render(); return; }
-      } else if (!Store.group(code)){ S.err='Такой группы нет. Проверь код — его знает преподаватель.'; render(); return; }
-      S.groupCode = code; S.err=''; render();
+        try { me = await Store.loginStudent(code); }
+        catch(e){ S.err = /нет/.test(e.message) ? notFound : e.message; render(); return; }
+      } else {
+        const s = Store.db.students.find(x => x.code === code);
+        if (!s){ S.err = notFound; render(); return; }
+        me = s.id;
+      }
+      const st = Store.db.students.find(x => x.id === me);
+      S.studentId = me; S.studentCode = code; S.groupCode = st ? st.groupCode : null;
+      S.screen = 'student'; S.err = ''; save(); render();
     };
     p.querySelector('#go').onclick = go;
     p.querySelector('#gc').onkeydown = e => { if(e.key==='Enter') go(); };
     p.querySelector('#bk').onclick = () => { S.role=null; S.err=''; render(); };
-    el.appendChild(p); return el;
-  }
-
-  if (S.role === 'student'){
-    const list = Store.studentsOf(S.groupCode);
-    const p = $(`<div class="panel">
-      <h1 style="font-size:31px;margin-bottom:6px">Найди себя</h1>
-      <p class="lede" style="margin-bottom:20px">${esc(Store.group(S.groupCode).name)}</p>
-      <div class="name-list"></div>
-      <button class="btn ghost" id="bk">Другая группа</button>
-    </div>`);
-    const nl = p.querySelector('.name-list');
-    if (!list.length) nl.appendChild($(`<div class="empty">
-      <div class="ico">·</div>
-      <div class="t">В этой группе пока никого нет</div>
-      <div class="s">Список учеников заводит администратор. Проверь код группы — возможно, он от другого класса.</div>
-    </div>`));
-    list.forEach(s => {
-      const b = $(`<button>${esc(s.name)}</button>`);
-      b.onclick = () => { S.studentId=s.id; S.screen='student'; save(); render(); };
-      nl.appendChild(b);
-    });
-    p.querySelector('#bk').onclick = () => { S.groupCode=null; render(); };
     el.appendChild(p); return el;
   }
 
@@ -1180,8 +1198,10 @@ function viewTeacher(){
     <thead><tr><th style="text-align:left;padding-left:12px">Ученик</th>${PROJECTS.map(p=>`<th title="${esc(p.t)} — открыть урок"><a class="mxh" target="_blank" href="${CONFIG.GUIDE_URL}#proj-${p.n}">${String(p.n).padStart(2,'0')}</a></th>`).join('')}<th>Итого</th></tr></thead>
     <tbody></tbody></table>`);
   const tb = tbl.querySelector('tbody');
+  // Код входа стоит рядом с именем: ребёнок забыл — преподаватель подсказал,
+  // не выходя из кабинета. Мелко и серо, чтобы не спорить с именем.
   list.forEach(s => {
-    const tr = $(`<tr><th>${esc(s.name)}</th></tr>`);
+    const tr = $(`<tr><th>${esc(s.name)}${s.code ? ` <span class="muted" style="font-family:var(--mono);font-size:12px;font-weight:400;margin-left:6px">${esc(s.code)}</span>` : ''}</th></tr>`);
     PROJECTS.forEach(p => {
       const pr = Store.prog(s.id, p.n);
       const cs = Store.state(s.id, p.n);
@@ -1415,7 +1435,7 @@ function viewAdmin(){
       // Строка выбранной группы подсвечена: сравнение имеет смысл только
       // рядом с остальными, поэтому список не режем, а помечаем место.
       tb.appendChild($(`<tr${r.g.code===scope?' style="background:var(--paper-3)"':''}>
-        <td><b>${esc(r.g.name)}</b><div class="muted" style="font-family:var(--mono);font-size:12px;margin-top:2px">${esc(r.g.code)}</div></td>
+        <td><b>${esc(r.g.name)}</b></td>
         <td>${esc(r.t ? r.t.name : '—')}</td>
         <td>${r.list.length}</td>
         <td style="min-width:220px">
@@ -1517,14 +1537,15 @@ function viewAdmin(){
 
 function adminGroups(){
   const box = $(`<div class="two"></div>`);
-  const left = $(`<div class="card"><table class="list"><thead><tr><th>Название</th><th>Код</th><th>Преподаватель</th><th>Учеников</th><th></th></tr></thead><tbody></tbody></table></div>`);
+  // Кода группы в таблице больше нет: ученики входят личными кодами, а
+  // внутренний ключ группы человеку ни к чему.
+  const left = $(`<div class="card"><table class="list"><thead><tr><th>Название</th><th>Преподаватель</th><th>Учеников</th><th></th></tr></thead><tbody></tbody></table></div>`);
   const tb = left.querySelector('tbody');
-  if (!Store.db.groups.length) tb.appendChild($(`<tr><td colspan="5" class="empty">Групп пока нет</td></tr>`));
+  if (!Store.db.groups.length) tb.appendChild($(`<tr><td colspan="4" class="empty">Групп пока нет</td></tr>`));
   Store.db.groups.forEach(g => {
     const t = Store.teacher(g.teacherId);
     const tr = $(`<tr>
       <td>${esc(g.name)}</td>
-      <td><code style="font-family:var(--mono);background:var(--paper-3);padding:2px 6px;border-radius:2px">${esc(g.code)}</code></td>
       <td>${esc(t?t.name:'—')}</td>
       <td>${Store.studentsOf(g.code).length}</td>
       <td style="text-align:right"></td></tr>`);
@@ -1537,28 +1558,26 @@ function adminGroups(){
     tb.appendChild(tr);
   });
 
-  // В сетевом режиме код группы придумывает сервер — случайный, чтобы его
-  // нельзя было перебрать по шаблону «ROBO-5A, ROBO-5B…». В демо — руками.
+  // Внутренний ключ группы придумывает сервер (в демо — сами), человек его
+  // не видит и не вводит: ученики входят личными кодами.
   const right = $(`<div class="card">
     <h3 style="font-family:var(--serif);font-size:22px;margin-bottom:12px">Новая группа</h3>
     <div class="field"><label>Название (что видит преподаватель)</label><input id="gn" placeholder="Робототехника · 6А · вт/чт 15:00"></div>
-    ${Store.live ? '' : '<div class="field"><label>Код для учеников</label><input id="gcd" placeholder="ROBO-6A"></div>'}
     <div class="field"><label>Преподаватель</label><select id="gt">${Store.db.teachers.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('')}</select></div>
     <div class="err" id="ge"></div>
     <button class="btn primary" id="gadd">Создать группу</button>
   </div>`);
   right.querySelector('#gadd').onclick = async () => {
     const name = right.querySelector('#gn').value.trim();
-    const code = Store.live ? '' : right.querySelector('#gcd').value.trim().toUpperCase();
+    const code = Store.live ? '' : 'G-' + Math.random().toString(36).slice(2, 8).toUpperCase();
     const teacherId = right.querySelector('#gt').value;
     const e = right.querySelector('#ge');
-    if (!name || (!Store.live && !code)){ e.textContent = Store.live ? 'Напиши название группы.' : 'Заполни название и код.'; return; }
-    if (code && Store.group(code)){ e.textContent='Группа с таким кодом уже есть.'; return; }
+    if (!name){ e.textContent = 'Напиши название группы.'; return; }
     if (!teacherId){ e.textContent='Сначала добавь хотя бы одного преподавателя.'; return; }
     try {
-      const g = await Store.addGroup({code, name, teacherId});
+      await Store.addGroup({code, name, teacherId});
       render();
-      if (Store.live) toast('Группа создана. Код для учеников: ' + g.code);
+      toast('Группа «' + name + '» создана.');
     } catch(err){ e.textContent = err.message; }
   };
   box.append(left, right); return box;
@@ -1566,15 +1585,27 @@ function adminGroups(){
 
 function adminStudents(){
   const box = $(`<div class="two"></div>`);
-  const left = $(`<div class="card"><table class="list"><thead><tr><th>Ученик</th><th>Группа</th><th>Прогресс</th><th>Набор</th><th></th></tr></thead><tbody></tbody></table></div>`);
+  // Группа — по названию, не по внутреннему коду: код ничего не говорит человеку.
+  // Код ученика — это его вход; клик по нему даёт поправить опечатку из таблицы.
+  const gname = code => { const g = Store.group(code); return g ? shortGroup(g) : '—'; };
+  const left = $(`<div class="card"><table class="list"><thead><tr><th>Ученик</th><th>Код</th><th>Группа</th><th>Прогресс</th><th>Набор</th><th></th></tr></thead><tbody></tbody></table></div>`);
   const tb = left.querySelector('tbody');
-  if (!Store.db.students.length) tb.appendChild($(`<tr><td colspan="5" class="empty">Учеников пока нет</td></tr>`));
+  if (!Store.db.students.length) tb.appendChild($(`<tr><td colspan="6" class="empty">Учеников пока нет</td></tr>`));
   Store.db.students.forEach(s => {
-    const tr = $(`<tr><td>${esc(s.name)}</td><td><code style="font-family:var(--mono);font-size:12px">${esc(s.groupCode)}</code></td>
+    const tr = $(`<tr><td>${esc(s.name)}</td><td></td><td>${esc(gname(s.groupCode))}</td>
       <td>${Store.doneCount(s.id)} / ${NPROJ}</td><td></td><td style="text-align:right"></td></tr>`);
+    const cb = $(`<button class="btn ghost tiny" style="font-family:var(--mono)" title="Изменить код">${s.code ? esc(s.code) : 'нет кода'}</button>`);
+    cb.onclick = async () => {
+      const v = prompt('Код ученика «' + s.name + '»:', s.code || '');
+      if (v === null) return;
+      const nc = v.trim();
+      if (!nc){ toast('Код не может быть пустым.'); return; }
+      try { await Store.setStudentCode(s.id, nc); render(); } catch(e){ toast(e.message); }
+    };
+    tr.children[1].appendChild(cb);
     const kb = $(`<button class="btn ${s.kit?'':'ghost'} tiny">${s.kit?'выдан':'нет'}</button>`);
     kb.onclick = async () => { try { await Store.setKit(s.id, !s.kit); render(); } catch(e){ toast(e.message); } };
-    tr.children[3].appendChild(kb);
+    tr.children[4].appendChild(kb);
     const del = $(`<button class="btn ghost tiny">Удалить</button>`);
     del.onclick = async () => {
       if(!confirmish('Удалить ученика «'+s.name+'»?')) return;
@@ -1586,19 +1617,28 @@ function adminStudents(){
 
   const right = $(`<div class="card">
     <h3 style="font-family:var(--serif);font-size:22px;margin-bottom:6px">Добавить учеников</h3>
-    <p class="muted" style="font-size:13.5px">Вставь список из журнала — по одному имени в строке. Заведутся все сразу.</p>
+    <p class="muted" style="font-size:13.5px">Вставь список из таблицы — в строке имя и код ученика (номер лицевого счёта). Два столбца из Excel вставляются как есть.</p>
     <div class="field"><label>Группа</label><select id="sg">${Store.db.groups.map(g=>`<option value="${esc(g.code)}">${esc(g.name)}</option>`).join('')}</select></div>
-    <div class="field"><label>Имена</label><textarea id="sn" rows="7" placeholder="Азамат Жумабеков&#10;Алина Ким&#10;Бекзат Турсунов"></textarea></div>
+    <div class="field"><label>Имена и коды</label><textarea id="sn" rows="7" placeholder="Азамат Жумабеков	34040&#10;Алина Ким	34077&#10;Бекзат Турсунов	34038"></textarea></div>
     <div class="err" id="se"></div>
     <button class="btn primary" id="sadd">Добавить</button>
   </div>`);
   right.querySelector('#sadd').onclick = async () => {
     const code = right.querySelector('#sg').value;
-    const names = right.querySelector('#sn').value.split('\n').map(x=>x.trim()).filter(Boolean);
     const e = right.querySelector('#se');
+    // Строка: «Имя Фамилия <таб или пробелы> код». Код — последнее слово из
+    // букв и цифр; если его нет, говорим про какую строку речь, а не
+    // молча пропускаем — потом такого ученика не найти.
+    const rows = [];
+    for (const line of right.querySelector('#sn').value.split('\n')){
+      const t = line.trim(); if (!t) continue;
+      const m = t.match(/^(.*?)[\s;,]+([A-Za-z0-9-]{3,32})$/);
+      if (!m || !m[1].trim()){ e.textContent = 'В строке «' + t + '» не нашёл код. Нужно: имя, потом код.'; return; }
+      rows.push({name: m[1].trim(), code: m[2]});
+    }
     if (!code){ e.textContent='Сначала создай группу.'; return; }
-    if (!names.length){ e.textContent='Список пустой.'; return; }
-    try { await Store.addStudents(code, names); render(); } catch(err){ e.textContent = err.message; }
+    if (!rows.length){ e.textContent='Список пустой.'; return; }
+    try { await Store.addStudents(code, rows); render(); } catch(err){ e.textContent = err.message; }
   };
   box.append(left, right); return box;
 }
@@ -1694,7 +1734,7 @@ function confirmish(msg){ return window.confirm(msg); }
     // Человек уже входил на этом устройстве — забираем свежие списки. Если вход
     // устарел (или ученика/преподавателя убрали из списка) — на экран входа.
     try {
-      await Store.refresh(S.role, S.groupCode);
+      await Store.refresh(S.role, S.studentCode);
       if (S.role === 'student' && !Store.db.students.some(s => s.id === S.studentId)) throw new Error('нет');
       if (S.role === 'teacher' && !Store.db.teachers.some(t => t.id === S.teacherId)) throw new Error('нет');
     } catch(e){ logout(); return; }
@@ -1704,7 +1744,7 @@ function confirmish(msg){ return window.confirm(msg); }
 </script>
 <script>
 /* Защита от копирования — как в инструкции. Поля ввода не трогаем:
-   преподавателю нужно копировать код группы, ученику — вводить его. */
+   преподавателю нужно копировать код ученика, ученику — вводить его. */
 document.addEventListener('copy', function(e) {
   var t = e.target;
   if (t && t.closest && t.closest('input, textarea, [contenteditable="true"]')) return;

@@ -1647,9 +1647,9 @@ document.addEventListener('contextmenu', function(e) { e.preventDefault(); retur
   var sess = null;
   try { sess = JSON.parse(ls('robo_session') || 'null'); } catch(e){}
   /* Тот же api.php, что у кабинетов. Сервер требует либо токен взрослого,
-     либо код группы ученика — и то и другое кабинет оставил в сессии. */
+     либо личный код ученика — и то и другое кабинет оставил в сессии. */
   function api(action, params){
-    var body = Object.assign({token: (sess && sess.token) || '', groupCode: (sess && sess.groupCode) || ''}, params);
+    var body = Object.assign({token: (sess && sess.token) || '', studentCode: (sess && sess.studentCode) || ''}, params);
     return fetch(CONFIG.API_URL + '?action=' + encodeURIComponent(action), {
       method: 'POST',
       headers: {'Content-Type': 'application/x-www-form-urlencoded'},
