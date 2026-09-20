@@ -790,7 +790,7 @@ function viewLogin(){
       <p class="lede" style="margin-bottom:22px">${Store.live
         ? 'Это твой номер лицевого счёта в школе — тот же, что для оплаты. Если не помнишь, спроси у преподавателя.'
         : 'В демо подойдёт любой код от 1001 до 1025 — каждый открывает своего ученика.'}</p>
-      <div class="field"><label>Код</label><input id="gc" placeholder="${Store.live ? '34040' : '1001'}" inputmode="numeric" autocomplete="off"></div>
+      <div class="field"><label>Код</label><input id="gc" placeholder="${Store.live ? '' : '1001'}" inputmode="numeric" autocomplete="off"></div>
       <div class="err">${esc(S.err)}</div>
       <div style="display:flex;gap:9px;margin-top:12px"><button class="btn primary" id="go">Войти</button><button class="btn ghost" id="bk">Назад</button></div>
     </div>`);
@@ -1619,7 +1619,7 @@ function adminStudents(){
     <h3 style="font-family:var(--serif);font-size:22px;margin-bottom:6px">Добавить учеников</h3>
     <p class="muted" style="font-size:13.5px">Вставь список из таблицы — в строке имя и код ученика (номер лицевого счёта). Два столбца из Excel вставляются как есть.</p>
     <div class="field"><label>Группа</label><select id="sg">${Store.db.groups.map(g=>`<option value="${esc(g.code)}">${esc(g.name)}</option>`).join('')}</select></div>
-    <div class="field"><label>Имена и коды</label><textarea id="sn" rows="7" placeholder="Азамат Жумабеков	34040&#10;Алина Ким	34077&#10;Бекзат Турсунов	34038"></textarea></div>
+    <div class="field"><label>Имена и коды</label><textarea id="sn" rows="7" placeholder="Азамат Жумабеков	10001&#10;Алина Ким	10002&#10;Бекзат Турсунов	10003"></textarea></div>
     <div class="err" id="se"></div>
     <button class="btn primary" id="sadd">Добавить</button>
   </div>`);
